@@ -5,9 +5,11 @@ const mult = (img: ImageData, matrix: number[]): ImageData => {
   const channels = 4;
   const res = [];
 
+  console.log(img.data.length / w / h);
+
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      const index = channels * (y * h + x);
+      const index = channels * (y * w + x);
       const r = img.data[index + 0];
       const g = img.data[index + 1];
       const b = img.data[index + 2];

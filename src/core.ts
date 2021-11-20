@@ -111,3 +111,39 @@ export const add = (imgA: ImageData, imgB: ImageData): ImageData => {
     imgA.height
   );
 };
+
+
+export const invert = (image: ImageData): ImageData => {
+  const r: number[] = [];
+  for (let i = 0; i < image.data.length; i++) {
+    if (i % 4 !== 3) {
+      r.push(255 - image.data[i]);
+    } else {
+      r.push(image.data[i]);
+    }
+  }
+  return new ImageData(
+    new Uint8ClampedArray(r),
+    image.width,
+    image.height
+  );
+};
+
+
+/**
+ * greyscale => blur => invert
+ * greyscale
+*/
+export const dodge = (front: ImageData, back: ImageData): ImageData => {
+  const r: number[] = [];
+  for (let i = 0; i < front.data.length; i++) {
+    let v = front.data[i] /  (255 - back.data[i]);
+    if (v > 1) v = 1;
+    r.push(v * 255);
+  }
+  return new ImageData(
+    new Uint8ClampedArray(r),
+    front.width,
+    front.height
+  );
+};

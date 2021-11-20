@@ -1,3 +1,4 @@
+import { greyScale, invert } from './core';
 import { convolve } from './convolve';
 
 const blurGaussian = [
@@ -21,4 +22,26 @@ export const uniformBlur = (img: ImageData, v: number): ImageData => {
     weights.push(1 / v2);
   }
   return convolve(img, weights);
+};
+
+
+export const glowFilter = (img: ImageData): ImageData => {
+  let mask = gaussianBlur(img);
+  mask = greyScale(mask);
+
+  const r: number[] = [];
+
+  for (let i = 0; i < img.data.length; i++) {
+    if (i % 4 !== 3) {
+      const v = Math.min(255, 0.5 * mask.data[i] + 0.9 * img.data[i]);
+      r.push(v);
+    } else {
+      r.push(255);
+    }
+  }
+  return new ImageData(
+    new Uint8ClampedArray(r),
+    img.width, 
+    img.height
+  );
 };
