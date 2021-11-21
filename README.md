@@ -2,12 +2,12 @@
 A collection of Javscript image manipulation utilties and effects filters.
 
 
-# Usage example
+## Usage example
 ```
 const createCanvas = (img) => {
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
-  canvas.height = img.height; 
+  canvas.height = img.height;
   const context = canvas.getContext('2d');
   context.putImageData(img, 0, 0);
   return canvas;
@@ -25,19 +25,20 @@ document.body.append(hatchCanvas);
 const burn = dodge(
   invert(uniformBlur(greyScale(img), 8)),
   greyScale(img)
-); 
+);
 const burnCanvas = createCanvas(burn);
 document.body.append(burnCanvas);
 ```
 
 
-# Build library
+## Build library
 ```
 npm run build
 ```
 
 
-# Run Examples - http://localhost:8090
+## Run Examples
+Runs on http://localhost:8090
 ```
 npm run develop
 ```

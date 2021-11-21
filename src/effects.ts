@@ -2,7 +2,36 @@ const luminosity = (r: number, g: number, b: number): number => {
   return (r * 0.299 + g * 0.587 +  b * 0.114) / 255.0;
 };
 
+
+export const gridFilter = (img:ImageData, space: number, size: number): ImageData => {
+  const w = img.width;
+  const h = img.height;
+  const channels = 4;
+
+  const res: number[] = [];
+
+  for(let y = 0; y < h; y++) {
+    for(let x = 0; x < w; x++) {
+      const index = channels * (y * w + x);
+      if (y % space < size || x % space < size) {
+        res.push(255);
+        res.push(255);
+        res.push(255);
+        res.push(255);
+      } else {
+        res.push(img.data[index + 0]);
+        res.push(img.data[index + 1]);
+        res.push(img.data[index + 2]);
+        res.push(255);
+      }
+    }
+  }
+  return new ImageData(new Uint8ClampedArray(res), img.width, img.height);
+};
+
+
 // http://www.geeks3d.com/20110219/shader-library-crosshatching-glsl-filter/
+// https://www.npmjs.com/package/glsl-crosshatch-filter
 export const hatchFilter = (
   img: ImageData,
   t1: number,
@@ -70,7 +99,13 @@ export const hatchFilter = (
   return new ImageData(new Uint8ClampedArray(res), img.width, img.height);
 };
 
-export const fishEyeFilter = (img:ImageData, mw: number, mh: number): ImageData => {
+export const fishEyeFilter = (
+  img:ImageData,
+  cx: number,
+  cy: number,
+  radius: number,
+  strength: number
+): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
@@ -78,13 +113,13 @@ export const fishEyeFilter = (img:ImageData, mw: number, mh: number): ImageData 
   const result: number[] = [];
   for(let y = 0; y < h; y++) {
     for(let x = 0; x < w; x++) {
-      const dx = x - mw;
-      const dy = y - mh;
+      const dx = x - cx;
+      const dy = y - cy;
       const r = Math.sqrt(dx * dx + dy * dy);
       
-      if (r < 60) {
-        const u = Math.floor(mw + dx * 0.015 * r);
-        const v = Math.floor(mh + dy * 0.015 * r);
+      if (r < radius) {
+        const u = Math.floor(cx + dx * strength * r);
+        const v = Math.floor(cy + dy * strength * r);
         const index = channels * (v * w + u);
 
         result.push(img.data[index]);
