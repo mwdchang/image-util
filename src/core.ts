@@ -131,6 +131,7 @@ export const invert = (image: ImageData): ImageData => {
 
 
 /**
+ * See: https://www.freecodecamp.org/news/sketchify-turn-any-image-into-a-pencil-sketch-with-10-lines-of-code-cf67fa4f68ce/
  * greyscale => blur => invert
  * greyscale
 */
