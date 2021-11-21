@@ -2,6 +2,9 @@
 A collection of Javscript image manipulation utilties and effects filters.
 
 
+![preview](preview.png)
+
+
 ## Usage example
 ```
 const createCanvas = (img) => {
