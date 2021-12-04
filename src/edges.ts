@@ -1,6 +1,15 @@
 import { convolve, convolve2 } from './convolve';
 import {greyScale} from './core';
 
+export const sharpenFilter = (img: ImageData): ImageData => {
+  const matrix = [
+     0, -1,  0,
+    -1,  5, -1,
+     0, -1,  0
+  ];
+  return convolve(img, matrix);
+};
+
 export const embossFilter = (img: ImageData): ImageData => {
   const grey = greyScale(img);
   const matrix = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
@@ -64,4 +73,3 @@ export const sobelFilter = (img: ImageData): ImageData => {
     img.height
   );
 };
-
