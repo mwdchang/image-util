@@ -6,6 +6,7 @@ import {
   kodakChromeFilter, polaroidfilter, sepiaFilter, vintageFilter
 } from '../../src/colours';
 import { SLIC } from '../../src/slic';
+import { shearAll } from '../../src/shear';
 
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
@@ -26,7 +27,9 @@ const runExample = async () => {
   const rose = await loadImage('example.png', { width: 180, height: 170 });
   const fern = await loadImage('example2.png', { width: 180, height: 130 });
   const tree = await loadImage('example3.jpg', { width: 180, height: 130 });
+  const boat = await loadImage('example4.jpeg', { width: 180, height: 160 });
 
+  // First row
   addExample(rose);
 
   const d = dodge(
@@ -45,6 +48,7 @@ const runExample = async () => {
   addExample(hatch);
 
 
+  // Second row
   document.body.append(document.createElement('br'));
   addExample(fern);
 
@@ -61,8 +65,7 @@ const runExample = async () => {
   addExample(kodak);
 
 
-
-
+  // Third row
   document.body.append(document.createElement('br'));
   addExample(tree);
 
@@ -79,16 +82,19 @@ const runExample = async () => {
   addExample(sobel);
 
 
-  // const test = findLocalMinimum(rose, 20, 10);
-  // console.log('findLocalMinimum', test);
   
+  // Fourth row
   document.body.append(document.createElement('br'));
 
-  const slic1 = SLIC(rose, 15, 5, 3, 15);
-  addExample(slic1);
+  addExample(boat);
 
-  const slic2 = SLIC(tree, 25, 8, 3, 50);
+  const slic2 = SLIC(boat, 12, 18, 4, 80);
   addExample(slic2);
+
+  const shift = shearAll(boat, 2, 10, 2, 10);
+  addExample(shift);
+
+
 };
 
 runExample();
