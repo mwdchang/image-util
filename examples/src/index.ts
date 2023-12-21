@@ -5,6 +5,7 @@ import { painterlyFilter, fishEyeFilter, hatchFilter, gridFilter } from '../../s
 import { 
   kodakChromeFilter, polaroidfilter, sepiaFilter, vintageFilter
 } from '../../src/colours';
+import { SLIC } from '../../src/slic';
 
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
@@ -78,6 +79,16 @@ const runExample = async () => {
   addExample(sobel);
 
 
+  // const test = findLocalMinimum(rose, 20, 10);
+  // console.log('findLocalMinimum', test);
+  
+  document.body.append(document.createElement('br'));
+
+  const slic1 = SLIC(rose, 15, 5, 3, 15);
+  addExample(slic1);
+
+  const slic2 = SLIC(tree, 25, 8, 3, 50);
+  addExample(slic2);
 };
 
 runExample();
