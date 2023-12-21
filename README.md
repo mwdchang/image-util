@@ -45,3 +45,15 @@ Runs on http://localhost:8090
 ```
 npm run develop
 ```
+
+## Filters and effects
+### Convolution based
+- sepia, polaroid, technicolour, kodakChrome, vintage
+- gaussian-blur, uniform-blur, glow
+- sharpen, emboss, laplacian, sobel
+
+### Effects
+- grid, hatch, fishEye, painterly, SLIC, shear
+
+### Misc
+- greyScale, invert, impose, dodge
