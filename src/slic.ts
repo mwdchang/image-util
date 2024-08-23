@@ -1,4 +1,5 @@
 // From https://github.com/xs7/Pixelate
+// From https://segmentfault.com/a/1190000040236028/en
 
 export const rgb2lab = (sR: number, sG: number, sB: number) => {
   //rgb2xyz
