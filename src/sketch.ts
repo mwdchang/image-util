@@ -1,4 +1,6 @@
-interface SketchOptions {
+// https://github.com/geraintluff/canvas-sketch/blob/master/sketch.js
+
+export interface SketchOptions {
 	levelSteps: number;
 	lineThickness: number;
 	lineLength: number;
@@ -8,9 +10,9 @@ interface SketchOptions {
 	lightness: number;
 	edgeAmount: number;
 	edgeBlurAmount: number;
+	greyScale: boolean;
 }
 
-// https://github.com/geraintluff/canvas-sketch/blob/master/sketch.js
 var Sketcher = (function () {
   function Sketcher(width: number, height: number) {
     this.levelSteps = 2;
@@ -29,86 +31,70 @@ var Sketcher = (function () {
     this.edgeAmount = 0.5;
   }
 
-  Sketcher.prototype = {
-    transformCanvas: function (canvas: HTMLCanvasElement, greyscale: boolean) {
-      const context = canvas.getContext('2d');
-      const width = canvas.width;
-      const height = canvas.height;
-      const imageData = context.getImageData(0, 0, width, height);
-      const pixels = imageData.data;
-
-      const pixelCodes = {};
-      for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-          const index = (x + y * width) * 4;
-          const pixelCode = pixels[index] + ':' + pixels[index + 1] + ':' + pixels[index + 2];
-          pixelCodes[pixelCode] = true;
-        }
-      }
-
-			let requiredColours = {};
-      while (true) {
-        requiredColours = {};
-        for (let key in pixelCodes) {
-          const parts = key.split(':');
-          const red = parseInt(parts[0]);
-          const green = parseInt(parts[1]);
-          const blue = parseInt(parts[2]);
-          const redIndex = Math.round(red/255*(this.levelSteps - 1));
-          const greenIndex = Math.round(green/255*(this.levelSteps - 1));
-          const blueIndex = Math.round(blue/255*(this.levelSteps - 1));
-          for (let ri = -1; ri <= 1; ri++) {
-            for (let gi = -1; gi <= 1; gi++) {
-              for (let bi = -1; bi <= 1; bi++) {
-                const key = (redIndex + ri) + ':' + (greenIndex + gi) + ':' + (blueIndex + bi);
-                requiredColours[key] = true;
-              }
-            }
-          }
-        }
-        console.log(Object.keys(requiredColours).length + ' required colour levels');
-        if (Object.keys(requiredColours).length > this.maxTextures && this.levelSteps > 2) {
-          this.levelSteps--;
-          console.log('Reducing to ' + this.levelSteps + ' RGB steps');
-          continue;
-        }
-        break;
-      }
-
-			const options: SketchOptions = {
-				levelSteps: this.levelSteps,
-				lineThickness: this.lineThickness,
-				lineLength: this.lineLength,
-				lineAlpha: this.lineAlpha,
-				lineDensity: this.lineDensity,
-				darkeningFactor: this.darkeningFactor,
-				lightness: this.lightness,
-				edgeAmount: this.edgeAmount,
-				edgeBlurAmount: this.edgeBlurAmount
-			};
-
-			const { canvases, imageDatas } = createTextures(width, height, requiredColours, options);
-			this.textureCanvases = canvases;
-
-      transformCanvasInner(canvas, greyscale, imageDatas, options);
-    }
-  };
-
   return Sketcher;
 })();
 
 
+export const sketchTransform = (img: ImageData, options: SketchOptions) => {
+  const width = img.width;
+  const height = img.height;
+  const pixels = img.data;
+
+  const pixelCodes = {};
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      const index = (x + y * width) * 4;
+      const pixelCode = pixels[index] + ':' + pixels[index + 1] + ':' + pixels[index + 2];
+      pixelCodes[pixelCode] = true;
+    }
+  }
+
+	let requiredColours = {};
+  while (true) {
+    requiredColours = {};
+    for (let key in pixelCodes) {
+      const parts = key.split(':');
+      const red = parseInt(parts[0]);
+      const green = parseInt(parts[1]);
+      const blue = parseInt(parts[2]);
+      const redIndex = Math.round(red/255*(options.levelSteps - 1));
+      const greenIndex = Math.round(green/255*(options.levelSteps - 1));
+      const blueIndex = Math.round(blue/255*(options.levelSteps - 1));
+      for (let ri = -1; ri <= 1; ri++) {
+        for (let gi = -1; gi <= 1; gi++) {
+          for (let bi = -1; bi <= 1; bi++) {
+            const key = (redIndex + ri) + ':' + (greenIndex + gi) + ':' + (blueIndex + bi);
+            requiredColours[key] = true;
+          }
+        }
+      }
+    }
+    console.log(Object.keys(requiredColours).length + ' required colour levels');
+
+		const maxTextures = NaN;
+    if (Object.keys(requiredColours).length > maxTextures && options.levelSteps > 2) {
+      options.levelSteps--;
+      console.log('Reducing to ' + options.levelSteps + ' RGB steps');
+      continue;
+    }
+    break;
+  }
+
+	const { canvases, imageDatas } = createTextures(width, height, requiredColours, options);
+	// this.textureCanvases = canvases;
+
+  return transformCanvasInner(img, imageDatas, options);
+}
+
+
 const transformCanvasInner = (
-	canvas: HTMLCanvasElement, 
-	greyscale: boolean,
+	img: ImageData,
 	imageDatas: any[],
 	options: SketchOptions
 ) => {
-  const context = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
-  const imageData = context.getImageData(0, 0, width, height);
-  const pixels = imageData.data;
+  const width = img.width;
+  const height = img.height;
+  const pixels = img.data;
 
   let edges = [];
   for (let x = 0; x < width; x++) {
@@ -135,7 +121,7 @@ const transformCanvasInner = (
 				imageDatas, index, red, green, blue, options.levelSteps
 			);
 
-      if (greyscale) {
+      if (options.greyScale) {
         const value = Math.round((rgb.red + rgb.green + rgb.blue)/3);
         rgb.red = rgb.green = rgb.blue = value;
       }
@@ -147,7 +133,8 @@ const transformCanvasInner = (
       pixels[index*4 + 2] = Math.round(rgb.blue * edgeFactor);
     }
   }
-  context.putImageData(imageData, 0, 0);
+	return img;
+  // context.putImageData(imageData, 0, 0);
 }
 
 

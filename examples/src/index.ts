@@ -7,6 +7,7 @@ import {
 } from '../../src/colours';
 import { SLIC } from '../../src/slic';
 import { shearAll } from '../../src/shear';
+import { SketchOptions, sketchTransform } from '../../src/sketch';
 
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
@@ -28,6 +29,7 @@ const runExample = async () => {
   const fern = await loadImage('example2.png', { width: 180, height: 130 });
   const tree = await loadImage('example3.jpg', { width: 180, height: 130 });
   const boat = await loadImage('example4.jpeg', { width: 180, height: 160 });
+  const austin = await loadImage('example5.png', { width: 180, height: 160 });
 
   // First row
   addExample(rose);
@@ -80,7 +82,7 @@ const runExample = async () => {
 
   const sobel = sobelFilter(tree);
   addExample(sobel);
-
+  
 
   
   // Fourth row
@@ -95,6 +97,31 @@ const runExample = async () => {
   addExample(shift);
 
 
+  // Test test
+  // const sketcherCanvas = createCanvas(boat);
+	const options: SketchOptions = {
+		levelSteps: 2,
+		lineThickness: 2.5,
+		lineLength: 80,
+		lineAlpha: 0.1,
+		lineDensity: 0.3,
+		darkeningFactor: 0.1,
+		lightness: 4,
+		edgeAmount: 0.2,
+		edgeBlurAmount: 4,
+		greyScale: false
+	};
+
+  options.lineDensity = 0.2;
+  options.lineThickness = 1.5;
+  options.lineLength = 40;
+  options.lineAlpha = 0.3;
+
+  options.edgeAmount = 1.0;
+  options.edgeBlurAmount = 3;
+
+  const sketch = sketchTransform(austin, options);
+  addExample(sketch);
 };
 
 runExample();

@@ -138,7 +138,7 @@ export const crop = (img: ImageData, rect: IRect): ImageData => {
 };
 
 
-export const add = (imgA: ImageData, imgB: ImageData): ImageData => {
+export const impose = (imgA: ImageData, imgB: ImageData): ImageData => {
   if (imgA.data.length !== imgB.data.length) {
     throw new Error('Bad dimension');
   }
