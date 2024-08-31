@@ -1,4 +1,4 @@
-import { greyScale, invert } from './core';
+import { greyScaleFilter } from './core';
 import { convolve } from './convolve';
 
 const blurGaussian = [
@@ -27,7 +27,7 @@ export const uniformBlur = (img: ImageData, v: number): ImageData => {
 
 export const glowFilter = (img: ImageData): ImageData => {
   let mask = gaussianBlur(img);
-  mask = greyScale(mask);
+  mask = greyScaleFilter(mask);
 
   const r: number[] = [];
 

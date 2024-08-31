@@ -45,8 +45,8 @@ const img = await ImageloadImage('example.jpg', { width: 200, height: 200 });
 
 // Dodge burn effect
 const burn = ImageUtil.dodge(
-  ImageUtil.invert(ImageUtil.uniformBlur(greyScale(img), 8)),
-  ImageUtil.greyScale(img)
+  ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
+  ImageUtil.greyScaleFilter(img)
 );
 const burnCanvas = createCanvas(burn);
 document.body.append(burnCanvas);

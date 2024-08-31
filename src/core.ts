@@ -1,3 +1,5 @@
+import { transpose } from "d3"
+
 interface Options {
   width: number
   height: number
@@ -41,7 +43,6 @@ export const loadImage = async (url: string, options: Options): Promise<ImageDat
 };
 
 
-
 /**
  * Flattens to grey scale
  */
@@ -50,7 +51,7 @@ interface RetainFilter {
   gFilter?: [number, number]
   bFilter?: [number, number]
 }
-export const greyScale = (
+export const greyScaleFilter = (
   img: ImageData,
   retainFilter?: RetainFilter
 ): ImageData => {
@@ -138,7 +139,40 @@ export const crop = (img: ImageData, rect: IRect): ImageData => {
 };
 
 
-export const impose = (imgA: ImageData, imgB: ImageData): ImageData => {
+type ColourData = {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+type TransformFN = (d: ColourData)  => ColourData;
+
+export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => {
+  const r: number[] = [];
+  const len = img.data.length;
+
+  for (let i = 0; i < len; i+=4) {
+    const result = fn({
+      r: img.data[i + 0],
+      g: img.data[i + 1],
+      b: img.data[i + 2],
+      a: img.data[i + 3]
+    });
+    r.push(result.r);
+    r.push(result.g);
+    r.push(result.b);
+    r.push(result.a);
+  }
+
+  return new ImageData(
+    new Uint8ClampedArray(r),
+    img.width,
+    img.height
+  );
+}
+
+
+export const imposeFilter = (imgA: ImageData, imgB: ImageData): ImageData => {
   if (imgA.data.length !== imgB.data.length) {
     throw new Error('Bad dimension');
   }
@@ -155,21 +189,15 @@ export const impose = (imgA: ImageData, imgB: ImageData): ImageData => {
   );
 };
 
-
-export const invert = (image: ImageData): ImageData => {
-  const r: number[] = [];
-  for (let i = 0; i < image.data.length; i++) {
-    if (i % 4 !== 3) {
-      r.push(255 - image.data[i]);
-    } else {
-      r.push(image.data[i]);
-    }
-  }
-  return new ImageData(
-    new Uint8ClampedArray(r),
-    image.width,
-    image.height
-  );
+export const invertFilter = (image: ImageData): ImageData => {
+  return transformFilter(image, (d) => {
+    return {
+      r: 255 - d.r,
+      g: 255 - d.g,
+      b: 255 - d.b,
+      a: d.a
+    };
+  });
 };
 
 
@@ -178,7 +206,7 @@ export const invert = (image: ImageData): ImageData => {
  * greyscale => blur => invert
  * greyscale
 */
-export const dodge = (front: ImageData, back: ImageData): ImageData => {
+export const dodgeFilter = (front: ImageData, back: ImageData): ImageData => {
   const r: number[] = [];
   for (let i = 0; i < front.data.length; i++) {
     let v = front.data[i] /  (255 - back.data[i]);
