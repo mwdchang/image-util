@@ -1,6 +1,5 @@
 // From https://github.com/xs7/Pixelate
 // From https://segmentfault.com/a/1190000040236028/en
-
 export const rgb2lab = (sR: number, sG: number, sB: number) => {
   //rgb2xyz
   let R = sR / 255
@@ -261,7 +260,6 @@ const getContours = (clusterID: any[], width: number, height: number) => {
 }
 
 
-
 export const SLIC = (img: ImageData, step: number, iters: number, stride: number, weight: number) => {
   const width = img.width;
   const height = img.height;
@@ -286,7 +284,6 @@ export const SLIC = (img: ImageData, step: number, iters: number, stride: number
   const { clusterID, centers } = computePixel(imgCopyLAB, step, iters, weight);
   const result = pickPixel(img, centers, clusterID, stride);
 
-
   const contours = getContours(clusterID, width, height);
 
   for (let i = 0; i < contours.length; i++) {
@@ -302,144 +299,3 @@ export const SLIC = (img: ImageData, step: number, iters: number, stride: number
   return new ImageData(new Uint8ClampedArray(result), img.width, img.height);
 }
 
-
-
-
-// export default class SLIC {
-//     constructor(imageArray, width, height) {
-//         this.rgbImage = Uint8ClampedArray.from(imageArray)
-//         this.imageArray = Array.from(imageArray)
-//         this.width = width
-//         this.height = height
-//         console.log("Total pixel :", this.width * this.height)
-//         console.log("width :", width)
-//         console.log("height: ", height)
-//     }
-// 
-//     showCenters(ctx) {
-// 
-//         // let canvas = document.getElementById("canvas")
-//         // let ctx = canvas.getContext("2d")
-//         //ctx.fillStyle = "#FF0000"
-//         ctx.fillStyle = "#" + ("00000" + ((Math.random() * 16777215 + 0.5) >> 0).toString(16)).slice(-6)
-//         for (let i = 0; i < this.centers.length; i++) {
-//             //console.log(this.centers[i].x + "  " + this.centers[i].y)
-//             ctx.fillRect(this.centers[i].y, this.centers[i].x, 5, 5)
-//         }
-//     }
-// 
-//     showContours(ctx) {
-//         let dx8 = [-1, -1, 0, 1, 1, 1, 0, -1]
-//         let dy8 = [0, -1, -1, -1, 0, 1, 1, 1]
-// 
-//         let contours = []
-//         let istaken = Array.from({ length: this.height }).map(linearray =>
-//             linearray = Array.from({ length: this.width }).map(item => item = false))
-// 
-//         for (let i = 0; i < this.height; i++) {
-//             for (let j = 0; j < this.width; j++) {
-//                 let nr_p = 0
-// 
-//                 /* Compare the pixel to its 8 neighbours. */
-//                 for (let k = 0; k < 8; k++) {
-//                     let x = i + dx8[k], y = j + dy8[k]
-// 
-//                     if (x >= 0 && x < this.height && y >= 0 && y < this.width) {
-//                         if (istaken[x][y] == false && this.clusterID[i * this.width + j] != this.clusterID[x * this.width + y]) {
-//                             nr_p += 1
-//                         }
-//                     }
-//                 }
-// 
-//                 /* Add the pixel to the contour list if desired. */
-//                 if (nr_p >= 2) {
-//                     contours.push({
-//                         x: i,
-//                         y: j
-//                     })
-//                     istaken[i][j] = true
-//                 }
-//             }
-//         }
-//         for (let i = 0; i < contours.length; i++) {
-//             // let ctx = this.canvas.getContext("2d")
-//             ctx.fillStyle = "#ffffff"
-//             ctx.fillRect(contours[i].y, contours[i].x, 2, 2)
-//         }
-//     }
-// 
-//     pickPixel() {
-//         console.log("paiting...................")
-//         // pick pixel 
-//         let row = Math.ceil(this.height / this.stride)
-//         let col = Math.ceil(this.width / this.stride)
-//         let resultImage = new Uint8ClampedArray(this.width * this.height * 4)
-// 
-//         // iteration for every pix rectangle
-//         for (let m = 0; m < row; m++) {
-//             for (let n = 0; n < col; n++) {
-// 
-//                 let startj = m * this.stride
-//                 let startk = n * this.stride
-//                 let counts = {}
-// 
-//                 for (let j = startj; j < startj + this.stride && j < this.height; j++) {
-//                     for (let k = startk; k < startk + this.stride && k < this.width; k++) {
-//                         let c = this.clusterID[j * this.width + k]
-//                         if (c != -1) {
-//                             if (counts[c]) {
-//                                 counts[c]++
-//                             } else {
-//                                 counts[c] = 1
-//                             }
-//                         }
-//                     }
-//                 }
-//                 let centerpos = -1
-//                 let max = Number.MIN_VALUE
-//                 for (let pos in counts) {
-//                     if (counts[pos] > max) {
-//                         max = counts[pos]
-//                         centerpos = pos
-//                     }
-//                 }
-// 
-//                 for (let j = startj; j < startj + this.stride && j < this.height; j++) {
-//                     for (let k = startk; k < startk + this.stride && k < this.width; k++) {
-//                         resultImage[4 * (j * this.width + k)] = this.rgbImage[4 * (this.centers[centerpos].x * this.width + this.centers[centerpos].y)]
-//                         resultImage[4 * (j * this.width + k) + 1] = this.rgbImage[4 * (this.centers[centerpos].x * this.width + this.centers[centerpos].y) + 1]
-//                         resultImage[4 * (j * this.width + k) + 2] = this.rgbImage[4 * (this.centers[centerpos].x * this.width + this.centers[centerpos].y) + 2]
-//                         resultImage[4 * (j * this.width + k) + 3] = this.rgbImage[4 * (this.centers[centerpos].x * this.width + this.centers[centerpos].y) + 3]
-//                     }
-//                 }
-//             }
-//         }
-//         console.log("paiting done...................")
-//         return resultImage
-//     }
-// 
-//     //pixelate image
-//     pixelDeal(step, iters, stride, weight) {
-//         this.step = step
-//         this.iters = iters
-//         this.stride = stride
-//         this.weight = weight
-// 
-//         console.log("step :", step)
-//         console.log("iters :", iters)
-//         console.log("weight :", weight)
-//         console.log("stride :", stride)
-// 
-//         //tranlate rgb to lab
-//         for (let i = 0; i < this.width * this.height; i += 4) {
-//             let labColor = this.rgb2lab(this.imageArray[i], this.imageArray[i + 1], this.imageArray[i + 2])
-//             this.imageArray[i] = labColor.l
-//             this.imageArray[i + 2] = labColor.a
-//             this.imageArray[i + 3] = labColor.b
-//         }
-//         this.computePixel()
-//         let result = this.pickPixel()
-// 
-//         return result
-//     }
-// }

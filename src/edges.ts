@@ -1,5 +1,5 @@
-import { convolve, convolve2 } from './convolve';
-import { greyScaleFilter } from './core';
+import { convolve, convolve2 } from './core';
+import { greyScaleFilter } from './greyscale';
 
 export const sharpenFilter = (img: ImageData): ImageData => {
   const matrix = [
@@ -33,7 +33,6 @@ export const laplacianFilter = (img: ImageData): ImageData => {
     r.push(r1[i]);
     r.push(255);
   }
-
 
   return new ImageData(
     new Uint8ClampedArray(r),

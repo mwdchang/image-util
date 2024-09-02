@@ -1,6 +1,4 @@
-import { transpose } from "d3"
-
-interface Options {
+interface LoadOptions {
   width: number
   height: number
 }
@@ -16,7 +14,7 @@ export const numChannels = (img: ImageData): number => {
   return img.data.length / img.width / img.height;
 };
 
-export const loadImage = async (url: string, options: Options): Promise<ImageData> =>  {
+export const loadImage = async (url: string, options: LoadOptions): Promise<ImageData> =>  {
   const img = new Image();
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -40,76 +38,6 @@ export const loadImage = async (url: string, options: Options): Promise<ImageDat
     img.src = url;
   });
   return imgRequest;
-};
-
-
-/**
- * Flattens to grey scale
- */
-interface RetainFilter {
-  rFilter?: [number, number]
-  gFilter?: [number, number]
-  bFilter?: [number, number]
-}
-export const greyScaleFilter = (
-  img: ImageData,
-  retainFilter?: RetainFilter
-): ImageData => {
-  const w = img.width;
-  const h = img.height;
-  const channels = 4;
-
-  const flat = new Uint8ClampedArray(w * h * channels);
-
-  for (let i = 0; i < w * h; ++i) {
-    const j = i * channels;
-
-    // Retain specific colour ranges
-    if (retainFilter) {
-      if (retainFilter.rFilter) {
-        const f = retainFilter.rFilter;
-        if (img.data[j] >= f[0] && img.data[j] <= f[1]) {
-          flat[j] = img.data[j];
-          flat[j + 1] = img.data[j + 1];
-          flat[j + 2] = img.data[j + 2];
-          flat[j + 3] = 255;
-          continue;
-        }
-      }
-      if (retainFilter.gFilter) {
-        const f = retainFilter.gFilter;
-        if (img.data[j + 1] >= f[0] && img.data[j + 1] <= f[1]) {
-          flat[j] = img.data[j];
-          flat[j + 1] = img.data[j + 1];
-          flat[j + 2] = img.data[j + 2];
-          flat[j + 3] = 255;
-          continue;
-        }
-      }
-      if (retainFilter.bFilter) {
-        const f = retainFilter.bFilter;
-        if (img.data[j + 2] >= f[0] && img.data[j + 2] <= f[1]) {
-          flat[j] = img.data[j];
-          flat[j + 1] = img.data[j + 1];
-          flat[j + 2] = img.data[j + 2];
-          flat[j + 3] = 255;
-          continue;
-        }
-      }
-    }
-
-    let v = 0;
-    for (let c = 0; c < (channels - 1); c++) {
-      v += img.data[j + c];
-    }
-    v /= 3;
-    for (let c = 0; c < (channels - 1); c++) {
-      flat[j + c] = v;
-    }
-    flat[j + channels - 1] = 255;
-  }
-
-  return new ImageData(new Uint8ClampedArray(flat), w, h);
 };
 
 
@@ -171,7 +99,6 @@ export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => 
   );
 }
 
-
 export const imposeFilter = (imgA: ImageData, imgB: ImageData): ImageData => {
   if (imgA.data.length !== imgB.data.length) {
     throw new Error('Bad dimension');
@@ -189,35 +116,124 @@ export const imposeFilter = (imgA: ImageData, imgB: ImageData): ImageData => {
   );
 };
 
-export const invertFilter = (image: ImageData): ImageData => {
-  return transformFilter(image, (d) => {
-    return {
-      r: 255 - d.r,
-      g: 255 - d.g,
-      b: 255 - d.b,
-      a: d.a
-    };
-  });
-};
 
+// Adapted from https://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+export const convolve = (img: ImageData, weights: number[]): ImageData => {
+  const side = Math.round(Math.sqrt(weights.length));
+  const halfSide = Math.floor(side / 2);
+  const sw = img.width;
+  const sh = img.height;
+  const channels = numChannels(img);
 
-/**
- * See: https://www.freecodecamp.org/news/sketchify-turn-any-image-into-a-pencil-sketch-with-10-lines-of-code-cf67fa4f68ce/
- * greyscale => blur => invert
- * greyscale
-*/
-export const dodgeFilter = (front: ImageData, back: ImageData): ImageData => {
-  const r: number[] = [];
-  for (let i = 0; i < front.data.length; i++) {
-    let v = front.data[i] /  (255 - back.data[i]);
-    if (v > 1) v = 1;
-    r.push(v * 255);
+  // pad output by the convolution matrix
+  const w = sw;
+  const h = sh;
+
+  const result: number[] = [];
+  // go through the destination image pixels
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      // calculate the weighed sum of the source image pixels that
+      // fall under the convolution matrix
+      const ch = [];
+      for (let c = 0; c < channels; c++) {
+        ch.push(0);
+      }
+
+      // Not well defined around edges
+      // if (y - halfSide < 0 || y + halfSide >= h || x - halfSide < 0 || x + halfSide >= w) {
+      //   for (let c = 0; c < channels; c++) {
+      //     ch[c] = data[(x * w + y) * channels];
+      //   }
+      // }
+
+      for (let cy = 0; cy < side; cy++) {
+        for (let cx = 0; cx < side; cx++) {
+          const scy = y + cy - halfSide;
+          const scx = x + cx - halfSide;
+          if (scy >= 0 && scy < sh && scx >= 0 && scx < sw) {
+            const srcOff = (scy * sw + scx) * channels;
+            const wt = weights[cy * side + cx];
+
+            for (let c = 0; c < channels; c++) {
+              ch[c] += img.data[srcOff + c] * wt;
+            }
+          } else {
+            // Not great ... but does the job
+            for (let c = 0; c < channels; c++) {
+              ch[c] += img.data[(y * w + x) * channels] * (1 / weights.length) * 0.28;
+            }
+          }
+        }
+      }
+      for (let c = 0; c < channels; c++) {
+        result.push(ch[c]);
+      }
+    }
   }
-  return new ImageData(
-    new Uint8ClampedArray(r),
-    front.width,
-    front.height
-  );
+
+  return new ImageData( new Uint8ClampedArray(result), sw, sh);
 };
 
+
+export const convolve2 = (
+  data: number[],
+  width: number,
+  height: number,
+  channels: number,
+  weights: number[]
+): number[] => {
+  const side = Math.round(Math.sqrt(weights.length));
+  const halfSide = Math.floor(side / 2);
+  const sw = width;
+  const sh = height;
+
+  // pad output by the convolution matrix
+  const w = sw;
+  const h = sh;
+
+  const result: number[] = [];
+  // go through the destination image pixels
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      // calculate the weighed sum of the source image pixels that
+      // fall under the convolution matrix
+      const ch = [];
+      for (let c = 0; c < channels; c++) {
+        ch.push(0);
+      }
+
+      // Not well defined around edges
+      // if (y - halfSide < 0 || y + halfSide >= h || x - halfSide < 0 || x + halfSide >= w) {
+      //   for (let c = 0; c < channels; c++) {
+      //     ch[c] = data[(x * w + y) * channels];
+      //   }
+      // }
+
+      for (let cy = 0; cy < side; cy++) {
+        for (let cx = 0; cx < side; cx++) {
+          const scy = y + cy - halfSide;
+          const scx = x + cx - halfSide;
+          if (scy >= 0 && scy < sh && scx >= 0 && scx < sw) {
+            const srcOff = (scy * sw + scx) * channels;
+            const wt = weights[cy * side + cx];
+
+            for (let c = 0; c < channels; c++) {
+              ch[c] += data[srcOff + c] * wt;
+            }
+          } else {
+            // Not great ... but does the job
+            for (let c = 0; c < channels; c++) {
+              ch[c] += data[(y * w + x) * channels] * (1 / weights.length) * 0.28;
+            }
+          }
+        }
+      }
+      for (let c = 0; c < channels; c++) {
+        result.push(ch[c]);
+      }
+    }
+  }
+  return result;
+}; 
 

@@ -1,11 +1,8 @@
-
 const mult = (img: ImageData, matrix: number[]): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
   const res = [];
-
-  console.log(img.data.length / w / h);
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -72,14 +69,16 @@ export const kodakChromeFilter = (img: ImageData): ImageData => {
   return mult(img, matrix);
 };
 
-  // browni ???
-  /*
+// Browni
+export const browniFilter = (img: ImageData): ImageData => {
   const matrix = [
     0.5997023498159715, 0.34553243048391263, -0.2708298674538042,
     -0.037703249837783157, 0.8609577587992641, 0.15059552388459913,
     0.24113635128153335, -0.07441037908422492, 0.44972182064877153
   ];
- */
+  return mult(img, matrix);
+}
+
 
 // vintage
 export const vintageFilter = (img: ImageData): ImageData => {
