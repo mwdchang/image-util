@@ -5,6 +5,7 @@ export * from './dodge';
 export * from './edges';
 export * from './fisheye';
 export * from './gaussian-blur';
+export * from './halftone';
 export * from './glow';
 export * from './greyscale';
 export * from './grid';

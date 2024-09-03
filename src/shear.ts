@@ -120,7 +120,7 @@ export const hshear = (img: ImageData, chunk: number, maxSize: number) => {
   return shifted;
 }
 
-export const shearAll = (img: ImageData, hChunk: number, hSize: number, vChunk: number, vSize: number) => {
+export const shearFilter = (img: ImageData, hChunk: number, hSize: number, vChunk: number, vSize: number) => {
   let res = hshear(img, hChunk, hSize);
   return vshear(res, vChunk, vSize);
 }
