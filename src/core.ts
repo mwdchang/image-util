@@ -42,7 +42,7 @@ export const loadImage = async (url: string, options: LoadOptions): Promise<Imag
 
 
 /**
- * Cropping
+ * Image crop
  */
 export const crop = (img: ImageData, rect: IRect): ImageData => {
   const w = img.width;
@@ -73,8 +73,11 @@ type ColourData = {
   b: number;
   a: number;
 }
-type TransformFN = (d: ColourData)  => ColourData;
 
+/**
+ * Transform a single image at pixel level
+**/
+type TransformFN = (d: ColourData)  => ColourData;
 export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => {
   const r: number[] = [];
   const len = img.data.length;
@@ -99,25 +102,47 @@ export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => 
   );
 }
 
-export const imposeFilter = (imgA: ImageData, imgB: ImageData): ImageData => {
-  if (imgA.data.length !== imgB.data.length) {
-    throw new Error('Bad dimension');
-  }
+/**
+ * Combined transform of two images at pixel level
+**/
+type Transform2FN = (a: ColourData, b: ColourData)  => ColourData;
+export const transform2Filter = (img1: ImageData, img2: ImageData, fn: Transform2FN) : ImageData => {
   const r: number[] = [];
+  if (img1.data.length !== img2.data.length) throw new Error('images need to be same length');
 
-  for (let i = 0; i < imgA.data.length; i++) {
-    const v = Math.min(255, imgA.data[i] + imgB.data[i]);
-    r.push(v);
+  const len = img1.data.length;
+
+  for (let i = 0; i < len; i+=4) {
+    const result = fn(
+      {
+        r: img1.data[i + 0],
+        g: img1.data[i + 1],
+        b: img1.data[i + 2],
+        a: img1.data[i + 3]
+      },
+      {
+        r: img2.data[i + 0],
+        g: img2.data[i + 1],
+        b: img2.data[i + 2],
+        a: img2.data[i + 3]
+      }
+    );
+    r.push(result.r);
+    r.push(result.g);
+    r.push(result.b);
+    r.push(result.a);
   }
+
   return new ImageData(
     new Uint8ClampedArray(r),
-    imgA.width,
-    imgA.height
+    img1.width,
+    img1.height
   );
-};
+}
 
-
-// Adapted from https://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+/**
+ * Adapted from https://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+**/
 export const convolve = (img: ImageData, weights: number[]): ImageData => {
   const side = Math.round(Math.sqrt(weights.length));
   const halfSide = Math.floor(side / 2);
@@ -174,7 +199,6 @@ export const convolve = (img: ImageData, weights: number[]): ImageData => {
 
   return new ImageData( new Uint8ClampedArray(result), sw, sh);
 };
-
 
 export const convolve2 = (
   data: number[],
