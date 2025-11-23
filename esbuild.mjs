@@ -76,7 +76,7 @@ function pluginIgnoreImports(options) {
     };
 }
 
-function getExamplesBuild(watch) {
+function getExamplesBuild() {
     return {
         entryPoints: [ 'examples/src/index.ts' ],
         bundle: true,
@@ -84,12 +84,11 @@ function getExamplesBuild(watch) {
         target: 'es2020',
         format: 'esm',
         sourcemap: true,
-        watch: Boolean(watch),
         plugins: [],
     };
 }
 
-function getLibBuild(watch) {
+function getLibBuild() {
     const input = [];
     globby.sync([
         path.join('src/', '/**/*.{ts,js}'),
@@ -105,14 +104,13 @@ function getLibBuild(watch) {
         target: 'es2020',
         format: 'esm',
         sourcemap: true,
-        watch: Boolean(watch),
         plugins: [
             pluginIgnoreImports(),
         ],
     };
 }
 
-function getDistBuild(watch) {
+function getDistBuild() {
     return {
         entryPoints: [ 'src/index.ts' ],
         bundle: true,
@@ -121,28 +119,40 @@ function getDistBuild(watch) {
         format: 'esm',
         sourcemap: false,
         minify: true,
-        watch: Boolean(watch),
         plugins: [],
     };
 }
 
 async function main(options) {
-    const promises = [];
+    const contexts = [];
 
     try {
         if (options.examples || options.all) {
-            promises.push(esbuild.build(getExamplesBuild(options.watch)));
+            contexts.push(await esbuild.context(getExamplesBuild()));
         }
 
         if (options.lib || options.all) {
-            promises.push(esbuild.build(getLibBuild(options.watch)));
+            contexts.push(await esbuild.context(getLibBuild()));
         }
 
         if (options.dist || options.all) {
-            promises.push(esbuild.build(getDistBuild(options.watch)));
+            contexts.push(await esbuild.context(getDistBuild()));
         }
 
-        await Promise.all(promises);
+        if (options.watch) {
+            for (const context of contexts) {
+                await context.watch();
+            }
+        } else {
+            const promises = [];
+            for (const context of contexts) {
+                promises.push(context.rebuild());
+            }
+            await Promise.all(promises);
+            for (const context of contexts) {
+                await context.dispose();
+            }
+        }
 
         if (options.examples) {
             copy('examples/static/**/*', 'build/examples/', (err) => {
