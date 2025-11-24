@@ -261,3 +261,25 @@ export const convolve2 = (
   return result;
 }; 
 
+
+// RGB → HSV (normalized 0–1 range)
+export const rgbToHsv = (r: number, g: number, b: number) => {
+  let max = Math.max(r, g, b);
+  let min = Math.min(r, g, b);
+  let d = max - min;
+
+  let h = 0;
+  if (d !== 0) {
+    if (max === r) {
+      h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    } else if (max === g) {
+      h = ((b - r) / d + 2) / 6;
+    } else {
+      h = ((r - g) / d + 4) / 6;
+    }
+  }
+
+  let s = max === 0 ? 0 : d / max;
+  let v = max;
+  return { h, s, v };
+};

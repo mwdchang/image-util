@@ -15,3 +15,4 @@ export * from './painterly';
 export * from './shear';
 export * from './sketch';
 export * from './slic';
+export * from './color-splash';
