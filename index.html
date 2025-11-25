@@ -23,7 +23,7 @@ canvas {
   </p>
 </body>
 <script type="module">
-import * as ImageUtil from "/dist/index.js"
+import * as ImageUtil from "./dist/index.js"
 
 const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
 document.body.append(ImageUtil.createCanvas(img));
