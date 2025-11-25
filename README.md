@@ -21,7 +21,7 @@ const createCanvas = (img) => {
 ```
 
 Simple example of hatch-filter
-```
+```js
 const img = await loadImage('example.jpg', { width: 200, height: 200 });
 
 // Cross-hatch effect
@@ -33,19 +33,16 @@ document.body.append(hatchCanvas);
 
 With CDN, showing composition of filters to create a dodge-burn effect
 
-```
+```html
 <script type="module">
 import * as ImageUtil from "https://cdn.jsdelivr.net/gh/mwdchang/image-util@latest/dist/index.js"
 
-const img = await ImageloadImage('example.jpg', { width: 200, height: 200 });
+const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
+document.body.append(ImageUtil.createCanvas(img));
 
-// Dodge burn effect
-const burn = ImageUtil.dodge(
-  ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
-  ImageUtil.greyScaleFilter(img)
-);
-const burnCanvas = createCanvas(burn);
-document.body.append(burnCanvas);
+const painterly = ImageUtil.painterlyFilter(img, 4, 10);
+document.body.append(ImageUtil.createCanvas(painterly));
+
 </script>
 ```
 

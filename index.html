@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<style>
+html {
+  font-family: 'Roboto';font-size: 18px;
+}
+canvas {
+  border: 1px solid #888;
+  margin: 5px;
+}
+</style>
+</head>
+<body>
+  <p>
+    Image filters: 
+  </p>
+  <p style="color: #888; font-size: 14px">
+      Left most is the base/original image, followed by a series of image filters. Refresh the page to generate new base image.
+      <br>
+      <a href="https://github.com/mwdchang/image-util">See source here</a>
+  </p>
+</body>
+<script type="module">
+import * as ImageUtil from "/dist/index.js"
+
+const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
+document.body.append(ImageUtil.createCanvas(img));
+
+// Dodge burn effect
+const burn = ImageUtil.dodgeFilter(
+  ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
+  ImageUtil.greyScaleFilter(img)
+);
+document.body.append(ImageUtil.createCanvas(burn));
+
+const painterly = ImageUtil.painterlyFilter(img, 4, 10);
+document.body.append(ImageUtil.createCanvas(painterly));
+
+const slic = ImageUtil.SLIC(img, 12, 18, 4, 80);
+document.body.append(ImageUtil.createCanvas(slic));
+
+
+</script>
+</html>
+

@@ -40,6 +40,16 @@ export const loadImage = async (url: string, options: LoadOptions): Promise<Imag
   return imgRequest;
 };
 
+export const createCanvas = (img: ImageData) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height; 
+  const context = canvas.getContext('2d');
+  context.putImageData(img, 0, 0);
+  return canvas;
+};
+
+
 
 /**
  * Image crop
