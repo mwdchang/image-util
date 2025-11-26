@@ -11,7 +11,7 @@ html {
 }
 
 body {
-  margin: 1rem;
+  margin: 1.25rem;
 }
 
 main {
@@ -23,10 +23,11 @@ main {
 canvas {
   background: #eee;
   border: 1px solid #555;
+  border-radius: 8px;
 
   /* Cap the size */
-  max-width: 340px;
-  max-height: 340px;
+  max-width: 320px;
+  max-height: 320px;
 
   /* Center inside grid area */
   width: 100%;
@@ -67,9 +68,7 @@ a:active {
 </style>
 </head>
 <body>
-  <p>
-    Image filters: 
-  </p>
+  <h3> Image filters: </h3>
   <p style="color: #888; font-size: 14px">
       Top-left most is the base/original image, followed by a series of image filters. Refresh the page to generate new base image.
       <br>
