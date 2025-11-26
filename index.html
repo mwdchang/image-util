@@ -1,15 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
 <style>
 html {
   font-family: 'Roboto';font-size: 18px;
+  background-image: radial-gradient(circle, #ffc9e8, #f6cbf0, #ebcef7, #dfd1fc, #d3d4ff, #cadaff, #c3dfff, #bfe4ff, #c0ecff, #c5f3ff, #ccf9fd, #d6fffc);
+  height: 100%;
 }
+
+body {
+  margin: 1rem;
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
 canvas {
-  border: 1px solid #888;
-  margin: 5px;
+  background: #eee;
+  border: 1px solid #555;
+
+  /* Cap the size */
+  max-width: 340px;
+  max-height: 340px;
+
+  /* Center inside grid area */
+  width: 100%;
+  height: 100%;
+
+  /* Optional: maintain square ratio */
+  aspect-ratio: 1 / 1;
+
+  /* Visual */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+
+/* Humanist-style anchor tag */
+a {
+  color: #3a4a8f;
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.15px;
+  transition: 
+    color 0.25s ease,
+    text-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+a:hover {
+  color: #2b3a78;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.08);
+}
+
+a:active {
+  color: #1c2755;
+  text-shadow: none;
+}
+
 </style>
 </head>
 <body>
@@ -17,30 +71,81 @@ canvas {
     Image filters: 
   </p>
   <p style="color: #888; font-size: 14px">
-      Left most is the base/original image, followed by a series of image filters. Refresh the page to generate new base image.
+      Top-left most is the base/original image, followed by a series of image filters. Refresh the page to generate new base image.
       <br>
       <a href="https://github.com/mwdchang/image-util">See source here</a>
   </p>
+  <h3 id="load-blocker" style="color:#888"> Working ... this takes a few seconds. <h3> 
+  <main>
+  </main>
 </body>
 <script type="module">
 import * as ImageUtil from "./dist/index.js"
 
+const mainElem = document.body.querySelector('main');
+
+
 const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
-document.body.append(ImageUtil.createCanvas(img));
+mainElem.append(ImageUtil.createCanvas(img));
 
 // Dodge burn effect
 const burn = ImageUtil.dodgeFilter(
   ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
   ImageUtil.greyScaleFilter(img)
 );
-document.body.append(ImageUtil.createCanvas(burn));
-
 const painterly = ImageUtil.painterlyFilter(img, 4, 10);
-document.body.append(ImageUtil.createCanvas(painterly));
-
 const slic = ImageUtil.SLIC(img, 12, 18, 4, 80);
-document.body.append(ImageUtil.createCanvas(slic));
+const sepia = ImageUtil.sepiaFilter(img);
 
+const options = {
+  levelSteps: 2,
+  lineThickness: 2.5,
+  lineLength: 80,
+  lineAlpha: 0.1,
+  lineDensity: 0.3,
+  darkeningFactor: 0.1,
+  lightness: 4,
+  edgeAmount: 0.2,
+  edgeBlurAmount: 4,
+  greyScale: false
+};
+options.lineDensity = 0.2;
+options.lineThickness = 1.5;
+options.lineLength = 40;
+options.lineAlpha = 0.3;
+options.levelSteps = 3;
+
+options.edgeAmount = 1.0;
+options.edgeBlurAmount = 3;
+const sketch = ImageUtil.sketchTransform(structuredClone(img), options);
+
+const emboss = ImageUtil.embossFilter(img);
+
+let fishEye= ImageUtil.fishEyeFilter(img, 120, 80, 180, 0.0055);
+fishEye= ImageUtil.fishEyeFilter(fishEye, 220, 180, 140, 0.0055);
+
+console.log(ImageUtil.fishEyeFilter);
+
+
+const filters = [
+  burn,
+  painterly,
+  slic,
+  sepia,
+  sketch,
+  emboss,
+  fishEye
+];
+
+for (const filter of _.shuffle(filters)) {
+  mainElem.append(ImageUtil.createCanvas(filter));
+}
+
+
+const blocker = document.querySelector('#load-blocker');
+if (blocker) {
+  blocker.remove();
+}
 
 </script>
 </html>
