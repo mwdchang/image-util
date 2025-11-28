@@ -16,3 +16,5 @@ export * from './shear';
 export * from './sketch';
 export * from './slic';
 export * from './colour-splash';
+export * from './motion-blur';
+export * from './radial-blur';

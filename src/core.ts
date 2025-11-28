@@ -284,3 +284,42 @@ export const rgbToHsv = (r: number, g: number, b: number) => {
   let v = max;
   return { h, s, v };
 };
+
+
+export const sampleBilinear = (img: ImageData, xpoint: number, ypoint: number) => {
+  const { width, height, data } = img;
+
+  const channels = (data.length / width) / height;
+  if (channels !== 4) {
+    throw new Error('Only support rgba channels currently...');
+  }
+
+  // Clamp to edges
+  let x = Math.max(0, Math.min(width - 1, xpoint));
+  let y = Math.max(0, Math.min(height - 1, ypoint));
+
+  const x0 = Math.floor(x);
+  const y0 = Math.floor(y);
+  const x1 = Math.min(x0 + 1, width - 1);
+  const y1 = Math.min(y0 + 1, height - 1);
+
+  const dx = x - x0;
+  const dy = y - y0;
+
+  function sample(px: number, py: number) {
+    const i = (py * width + px) * 4;
+    return [
+        data[i], data[i + 1], data[i + 2], data[i + 3]
+    ];
+  }
+
+  const c00 = sample(x0, y0);
+  const c10 = sample(x1, y0);
+  const c01 = sample(x0, y1);
+  const c11 = sample(x1, y1);
+
+  const c0 = c00.map((v, i) => v * (1 - dx) + c10[i] * dx);
+  const c1 = c01.map((v, i) => v * (1 - dx) + c11[i] * dx);
+  return c0.map((v, i) => v * (1 - dy) + c1[i] * dy);
+}
+

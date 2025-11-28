@@ -125,6 +125,8 @@ const halftone = ImageUtil.halftoneFilter(img, {
   shiftXStride: 0
 });
 
+const radialBlur = ImageUtil.radialSpinBlur(img, 150, 150, 15 * Math.PI / 180.0, 8);
+
 const filters = [
   burn,
   painterly,
@@ -135,7 +137,8 @@ const filters = [
   fishEye,
   nightVision,
   polaroid,
-  halftone
+  halftone,
+  radialBlur 
 ];
 
 for (const filter of _.shuffle(filters).slice(0, 7)) {
