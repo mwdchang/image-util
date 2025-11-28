@@ -18,3 +18,5 @@ export * from './slic';
 export * from './colour-splash';
 export * from './motion-blur';
 export * from './radial-blur';
+export * from './swirl';
+export * from './kaleidoscope';

@@ -40,6 +40,8 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  /* opacity: 0.95; */
 }
 
 /* Humanist-style anchor tag */
@@ -125,7 +127,8 @@ const halftone = ImageUtil.halftoneFilter(img, {
   shiftXStride: 0
 });
 
-const radialBlur = ImageUtil.radialSpinBlur(img, 150, 150, 15 * Math.PI / 180.0, 8);
+const swirl = ImageUtil.swirlFilter(img, 150, 150, 200, 180 * Math.PI / 180.0);
+const kaleidoscope = ImageUtil.kaleidoscopeFilter(img, 90, 150, 6);
 
 const filters = [
   burn,
@@ -138,7 +141,8 @@ const filters = [
   nightVision,
   polaroid,
   halftone,
-  radialBlur 
+  swirl,
+  kaleidoscope
 ];
 
 for (const filter of _.shuffle(filters).slice(0, 7)) {
