@@ -6,32 +6,7 @@ A collection of Javscript image manipulation utilties and effects filters.
 
 
 ## Usage example
-
-Given a `createCanvas` function.
-```
-const createCanvas = (img) => {
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const context = canvas.getContext('2d');
-  context.putImageData(img, 0, 0);
-  return canvas;
-};
-
-```
-
-Simple example of hatch-filter
-```js
-const img = await loadImage('example.jpg', { width: 200, height: 200 });
-
-// Cross-hatch effect
-const hatch = hatchFilter(img, 1.0, 0.7, 0.5, 0.25);
-const hatchCanvas = createCanvas(hatch);
-document.body.append(hatchCanvas);
-
-```
-
-With CDN, showing composition of filters to create a dodge-burn effect
+Quickstart
 
 ```html
 <script type="module">
@@ -46,12 +21,22 @@ document.body.append(ImageUtil.createCanvas(painterly));
 </script>
 ```
 
+Composing filters, using matrix-mult, glow, and blur to simulate a nightvision filter
+```js
+const nightVision = ImageUtil.uniformBlur(
+  ImageUtil.glowFilter(
+    ImageUtil.nightVisionFilter(img)
+  ), 6
+);
+document.body.append(ImageUtil.createCanvas(nightVision));
+```
+
 
 ## Build library
+The final files are under `build/dist/*`
 ```
 npm run build
 ```
-
 
 ## Run Examples
 Runs on http://localhost:8090
@@ -60,9 +45,4 @@ npm run develop
 ```
 
 ## Filters and effects
-### Convolution based
-- sepia, polaroid, technicolour, kodakChrome, vintage, browni, gaussian-blur, uniform-blur, glow, sharpen, emboss, laplacian, sobel
-
-### Effects
-- dodge, grid, hatch, fishEye, painterly, SLIC, shear, sketching
 
