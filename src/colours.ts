@@ -1,31 +1,4 @@
-const mult = (img: ImageData, matrix: number[]): ImageData => {
-  const w = img.width;
-  const h = img.height;
-  const channels = 4;
-  const res = [];
-
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const index = channels * (y * w + x);
-      const r = img.data[index + 0];
-      const g = img.data[index + 1];
-      const b = img.data[index + 2];
-      const a = img.data[index + 3];
-
-      const rNew = r * matrix[0] + g * matrix[1] + b * matrix[2];
-      const gNew = r * matrix[3] + g * matrix[4] + b * matrix[5];
-      const bNew = r * matrix[6] + g * matrix[7] + b * matrix[8];
-
-      res.push(rNew);
-      res.push(gNew);
-      res.push(bNew);
-      res.push(a);
-    }
-  }
-
-  return new ImageData(new Uint8ClampedArray(res), w, h);
-};
-
+import { mult } from "./core";
 
 // Matrices from Pixi.js
 export const sepiaFilter = (img: ImageData) : ImageData => {
@@ -37,7 +10,7 @@ export const sepiaFilter = (img: ImageData) : ImageData => {
   return mult(img, matrix);
 };
 
-export const polaroidfilter = (img: ImageData): ImageData => {
+export const polaroidFilter = (img: ImageData): ImageData => {
   // Polaroid
   const matrix = [
      1.438, -0.062, -0.062,
@@ -47,9 +20,8 @@ export const polaroidfilter = (img: ImageData): ImageData => {
   return mult(img, matrix);
 };
 
- 
 // Technicolor
-export const technicolourfilter = (img: ImageData): ImageData => {
+export const technicolourFilter = (img: ImageData): ImageData => {
   const matrix = [
     1.9125277891456083, -0.8545344976951645, -0.09155508482755585,
     -0.3087833385928097, 1.7658908555458428, -0.10601743074722245,
@@ -88,5 +60,21 @@ export const vintageFilter = (img: ImageData): ImageData => {
     0.0466055556782719, -0.0851232987247891, 0.5241648018700465
   ];
 
+  return mult(img, matrix);
+};
+
+// Night Vision
+export const nightVisionFilter = (img: ImageData): ImageData => {
+  /*
+    0.1, 0.4, 0.1,
+    0.14, 0.56, 0.14,
+    0.1, 0.4, 0.1
+  */
+
+  const matrix = [
+    0.1, 0.4, 0.1,
+    0.2, 0.8, 0.2,
+    0.1, 0.4, 0.1
+  ];
   return mult(img, matrix);
 };

@@ -225,6 +225,43 @@ export const convolve2 = (
   return result;
 }; 
 
+/**
+ * Applies a color matrix transformation to an image.
+ * This function is used to apply various color filters to an image.
+ *
+ * @param {ImageData} img The image data to apply the filter to.
+ * @param {number[]} matrix The color matrix to apply. This is a 3x3 matrix represented as a 9-element array.
+ * @returns {ImageData} The new image data with the filter applied.
+ */
+export const mult = (img: ImageData, matrix: number[]): ImageData => {
+  const w = img.width;
+  const h = img.height;
+  const channels = 4;
+  const res = [];
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const index = channels * (y * w + x);
+      const r = img.data[index + 0];
+      const g = img.data[index + 1];
+      const b = img.data[index + 2];
+      const a = img.data[index + 3];
+
+      const rNew = r * matrix[0] + g * matrix[1] + b * matrix[2];
+      const gNew = r * matrix[3] + g * matrix[4] + b * matrix[5];
+      const bNew = r * matrix[6] + g * matrix[7] + b * matrix[8];
+
+      res.push(rNew);
+      res.push(gNew);
+      res.push(bNew);
+      res.push(a);
+    }
+  }
+
+  return new ImageData(new Uint8ClampedArray(res), w, h);
+};
+
+
 
 // RGB → HSV (normalized 0–1 range)
 export const rgbToHsv = (r: number, g: number, b: number) => {

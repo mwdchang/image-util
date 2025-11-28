@@ -11,7 +11,7 @@ import { hatchFilter } from '../../src';
 import { gridFilter } from '../../src';
 import { 
     browniFilter,
-  kodakChromeFilter, polaroidfilter, sepiaFilter, vintageFilter
+  kodakChromeFilter, polaroidFilter, sepiaFilter, vintageFilter
 } from '../../src/colours';
 import { SLIC } from '../../src/slic';
 import { shearFilter } from '../../src/shear';
@@ -95,7 +95,7 @@ const runExample = async () => {
   const vintage = vintageFilter(fern);
   addExample(vintage);
 
-  const polaroid = polaroidfilter(fern);
+  const polaroid = polaroidFilter(fern);
   addExample(polaroid);
 
   const browni = browniFilter(fern);
