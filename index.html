@@ -129,8 +129,10 @@ const halftone = ImageUtil.halftoneFilter(img, {
 
 const swirl = ImageUtil.swirlFilter(img, 150, 150, 200, 180 * Math.PI / 180.0);
 const kaleidoscope = ImageUtil.kaleidoscopeFilter(img, 90, 150, 6);
+const sobel = ImageUtil.sobelFilter(img);
 
 const filters = [
+  sobel,
   burn,
   painterly,
   slic,
