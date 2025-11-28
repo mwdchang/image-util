@@ -46,3 +46,44 @@ npm run develop
 
 ## Filters and effects
 
+### Color Matrix Effects
+3x3 color matrix transformations
+
+- **Sepia**: Applies a sepia tone to the image.
+- **Polaroid**: Simulates the look of a Polaroid picture.
+- **Technicolor**: Mimics the Technicolor film effect.
+- **Kodak Chrome**: Simulates the look of Kodak Chrome film.
+- **Browni**: Applies a brownish tone to the image.
+- **Vintage**: Gives the image a vintage look.
+- **Night Vision**: Simulates a night vision effect.
+
+### Convolutional Effects
+Convolution related effects
+
+- **Blur**: Applies a simple box blur to the image.
+- **Gaussian Blur**: Applies a Gaussian blur to the image.
+- **Edge Detection**: Detects the edges in the image.
+
+### Pixel Transformation Effects
+These filters manipulate the individual pixels of the image.
+
+- **Greyscale**: Converts the image to greyscale.
+- **Invert**: Inverts the colors of theimage.
+- **Color Splash**: Converts the image to greyscale except for a selected color.
+
+### Geometric Transformation Effects
+Distortions
+
+- **Fisheye**: Creates a fisheye lens effect.
+- **Shear**: Shears the image.
+
+### Stylistic Effects
+Complex filters that produce a specific artistic style.
+
+- **Dodge**: Creates a dodge effect.
+- **Glow**: Adds a glow effect to the image.
+- **Halftone**: Creates a halftone pattern effect.
+- **Hatch**: Creates a hatching effect.
+- **Painterly**: Creates a painterly effect.
+- **Sketch**: Creates a sketch effect.
+
