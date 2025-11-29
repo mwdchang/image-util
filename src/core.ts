@@ -80,27 +80,35 @@ export const crop = (img: ImageData, rect: IRect): ImageData => {
 };
 
 
-type ColourData = {
+interface ColourData {
   r: number;
   g: number;
   b: number;
   a: number;
 }
 
+interface TransFormParam extends ColourData {
+  x: number;
+  y: number;
+}
+
 /**
  * Transform a single image at pixel level
 **/
-type TransformFN = (d: ColourData)  => ColourData;
+type TransformFN = (d: TransFormParam)  => ColourData;
 export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => {
   const len = img.data.length;
   const result = new Uint8ClampedArray(len);
 
   for (let i = 0; i < len; i+=4) {
+    const index = i / 4;
     const transformed = fn({
       r: img.data[i + 0],
       g: img.data[i + 1],
       b: img.data[i + 2],
-      a: img.data[i + 3]
+      a: img.data[i + 3],
+      x: index % img.width,
+      y: Math.floor(index / img.height)
     });
     result[i+0] = transformed.r;
     result[i+1] = transformed.g;

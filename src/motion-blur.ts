@@ -1,6 +1,6 @@
 import { sampleBilinear } from "./core";
 
-export const motionBlur = (src, angleRad, radius = 20, samples = 24) => {
+export const motionBlur = (src: ImageData, angleRad: number, radius = 20, samples = 24) => {
   const { width, height } = src;
 
   const out = new ImageData(width, height);
