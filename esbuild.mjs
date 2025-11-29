@@ -6,6 +6,7 @@ import copy from 'copy';
 import server from 'live-server';
 import { fileURLToPath } from 'url';
 
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function liveServer(options = {}) {
@@ -80,11 +81,23 @@ function getExamplesBuild() {
     return {
         entryPoints: [ 'examples/src/index.ts' ],
         bundle: true,
-        outdir: 'build/examples/examples',
+        outdir: 'build/examples',
         target: 'es2020',
         format: 'esm',
         sourcemap: true,
         plugins: [],
+    };
+}
+
+function workerHackHack() {
+    return {
+        entryPoints: [ 'src/worker.ts' ],
+        bundle: true,
+        outdir: 'build/examples',
+        target: 'es2020',
+        format: 'esm',
+        sourcemap: true,
+        plugins: [inlineWorker()],
     };
 }
 
@@ -112,7 +125,7 @@ function getLibBuild() {
 
 function getDistBuild() {
     return {
-        entryPoints: [ 'src/index.ts' ],
+        entryPoints: [ 'src/index.ts', 'src/worker.ts' ],
         bundle: true,
         outdir: 'build/dist/',
         target: 'es2020',
@@ -129,6 +142,7 @@ async function main(options) {
     try {
         if (options.examples || options.all) {
             contexts.push(await esbuild.context(getExamplesBuild()));
+            contexts.push(await esbuild.context(workerHackHack()));
         }
 
         if (options.lib || options.all) {
@@ -157,8 +171,6 @@ async function main(options) {
         if (options.examples) {
             copy('examples/static/**/*', 'build/examples/', (err) => {
                 if (err) {
-                    // Sorry future Adamo, Dario did something here that you copied
-                    // this is going to be an issue one day, you should throw!
                     console.error(err);
                 }
             });
@@ -178,7 +190,7 @@ async function main(options) {
                     path.resolve(__dirname, 'build/examples/'),
                 ],
                 mount: [
-                    ['/examples', path.resolve(__dirname, 'build/examples/examples')],
+                    ['/examples', path.resolve(__dirname, 'build/examples')],
                 ],
             });
             server.start();

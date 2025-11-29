@@ -20,3 +20,4 @@ export * from './motion-blur';
 export * from './radial-blur';
 export * from './swirl';
 export * from './kaleidoscope';
+export * from './controller'
