@@ -1,6 +1,6 @@
 export const newWorker = (name?: string) => {
   // create a fresh Worker each time
-  const worker = new Worker(new URL('worker.js', import.meta.url), {
+  const worker = new Worker(new URL('./worker.js', import.meta.url), {
     type: "module"
   });
   if (name) {
