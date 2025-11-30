@@ -79,7 +79,7 @@ a:active {
   </main>
 </body>
 <script type="module">
-import * as ImageUtil from "./dist/index.js"
+import * as ImageUtil from "./dist/index.js";
 
 const mainElem = document.body.querySelector('main');
 
@@ -87,7 +87,15 @@ const mainElem = document.body.querySelector('main');
 const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
 mainElem.append(ImageUtil.createCanvas(img));
 
+
+(async () => {
+  const worker = ImageUtil.newWorker();
+  const sepiaImage = await worker.sepiaFilter(img);
+  mainElem.append(ImageUtil.createCanvas(sepiaImage));
+})();
+
 // Dodge burn effect
+/*
 const burn = ImageUtil.dodgeFilter(
   ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
   ImageUtil.greyScaleFilter(img)
@@ -146,10 +154,11 @@ const filters = [
   swirl,
   kaleidoscope
 ];
+*/
 
-for (const filter of _.shuffle(filters).slice(0, 7)) {
-  mainElem.append(ImageUtil.createCanvas(filter));
-}
+// for (const filter of _.shuffle(filters).slice(0, 7)) {
+//   mainElem.append(ImageUtil.createCanvas(filter));
+// }
 
 const blocker = document.querySelector('#load-blocker');
 if (blocker) {

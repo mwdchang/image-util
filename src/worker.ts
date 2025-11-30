@@ -43,10 +43,17 @@ const filters: { [key: string]: Function } = {
 };
 
 self.onmessage = (e: any) => {
-  const { filter, imageData, options } = e.data;
-  console.log('[worker] started');
+  const { id, filter, imageData, params } = e.data;
+
+  console.log('[worker] started', params);
+  if (filter === 'xyz') {
+    console.log('I am done...');
+    self.postMessage({ id, result: 'done done'});
+    return;
+  }
+
   if (filters[filter]) {
-    const result = filters[filter](imageData, options);
-    self.postMessage(result);
+    const result = filters[filter](imageData, ...params);
+    self.postMessage({ id, result });
   }
 };

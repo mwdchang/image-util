@@ -10,6 +10,7 @@ import { hatchFilter } from '../../src';
 import { SLIC } from '../../src/slic';
 import { halftoneFilter } from '../../src/halftone';
 import { SketchOptions, sketchTransform } from '../../src/sketch';
+import { newWorker } from '../../src';
 
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
@@ -25,23 +26,56 @@ const addExample = (image: ImageData): void => {
   document.body.append(canvas);
 };
 
+
+const worker1: any = newWorker();
+const worker2: any = newWorker();
+
 const runExample = async () => {
   const rose = await loadImage('example.png', { width: 400, height: 400 });
   const tree = await loadImage('example3.jpg', { width: 400, height: 300 });
 
+  // Loading sync
   addExample(rose);
 
-  const dodge = dodgeFilter(
-    invertFilter(uniformBlur(greyScaleFilter(rose), 7)),
-    greyScaleFilter(rose)
-  ); 
-  addExample(dodge);
+  // Loading asynchronously
+  (async () => {
+    const painterly = await worker1.painterlyFilter(rose, 4, 10);
+    addExample(painterly);
+  })();
 
-  const painterly = painterlyFilter(rose, 4, 10);
-  addExample(painterly);
+  (async () => {
+    const im01 = await worker2.sobelFilter(rose);
+    addExample(im01);
+  })();
 
-  const emboss = embossFilter(rose);
-  addExample(emboss);
+  (async () => {
+    const emboss = await worker1.embossFilter(rose);
+    addExample(emboss);
+  })();
+
+  (async () => {
+    const hatch = await worker2.hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
+    addExample(hatch);
+  })();
+
+
+  // const dodge = dodgeFilter(
+  //   invertFilter(uniformBlur(greyScaleFilter(rose), 7)),
+  //   greyScaleFilter(rose)
+  // ); 
+  // addExample(dodge);
+
+
+
+  // Heavy synchronous code after
+  // const start = performance.now();
+  // while (performance.now() - start < 2000) {} // simulate blocking
+  // console.log('main thread done');
+
+
+  /*
+
+
 
   const hatch = hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
   addExample(hatch);
@@ -103,6 +137,9 @@ const runExample = async () => {
     }
   });
   addExample(transform);
+  */
+
+
 };
 
 runExample();

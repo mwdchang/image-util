@@ -90,7 +90,7 @@ const computeDist = (img: ImageData, center: Center, pixX: number, pixY: number,
 
 // Initialize cluster centers by sampling pixels at regualr grid step 
 export const computePixel = (img: ImageData, step: number, iters: number, weight: number) => {
-  console.log("computing.............................")
+  // console.log("computing.............................")
   const width = img.width;
   const height = img.height;
 
@@ -169,13 +169,13 @@ export const computePixel = (img: ImageData, step: number, iters: number, weight
       }
     }
   }
-  console.log("compute done.............................")
+  // console.log("compute done.............................")
   return { clusterID, centers };
 }
 
 
 const pickPixel = (img: ImageData, centers: any[], clusterID: any[], stride: number) => {
-  console.log("painting...................")
+  // console.log("painting...................")
 
   const width = img.width;
   const height = img.height;

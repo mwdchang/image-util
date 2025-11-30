@@ -97,7 +97,7 @@ function workerHackHack() {
         target: 'es2020',
         format: 'esm',
         sourcemap: true,
-        plugins: [inlineWorker()],
+        plugins: []
     };
 }
 
