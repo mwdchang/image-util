@@ -1,6 +1,12 @@
-export const newWorker = () => {
+export const newWorker = (name?: string) => {
   // create a fresh Worker each time
-  const worker = new Worker(new URL('worker.js', import.meta.url));
+  const worker = new Worker(new URL('worker.js', import.meta.url), {
+    type: "module"
+  });
+  if (name) {
+    worker.postMessage({ type: "init", name });
+  }
+
 
   // Map to store pending promises for this worker
   const pending = new Map<number, (data: any) => void>();
@@ -8,13 +14,29 @@ export const newWorker = () => {
 
   // Handle messages from this worker
   worker.onmessage = (e) => {
+    const { id, buffer, width, height } = e.data;
+
+    // Rebuild ImageData from transferred buffer
+    const data = new Uint8ClampedArray(buffer);
+    const imageData = new ImageData(data, width, height);
+    const resolve = pending.get(id);
+    if (resolve) {
+      resolve(imageData);
+      pending.delete(id);
+    }
+  };
+
+
+  /*
+  worker.onmessage = (e) => {
     const { id, result } = e.data;
     const resolve = pending.get(id);
     if (resolve) {
       resolve(result);
       pending.delete(id);
     }
-  };
+  }
+  */
 
   worker.onerror = (e) => {
     console.error('Worker error', e);
@@ -31,6 +53,14 @@ export const newWorker = () => {
 
   return new Proxy({}, {
     get: (_target, prop: string) => {
+
+      if (prop === "terminate") {
+        return () => {
+          pending.clear();
+          worker.terminate();
+        };
+      }
+
       return (imageData?: ImageData, ...args: any[]) =>
         call(prop, imageData, args);
     }

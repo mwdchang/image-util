@@ -60,7 +60,8 @@ export const halftoneFilter= (
   if (!options.gWeight) options.gWeight = 0.2;
   if (!options.bWeight) options.bWeight = 0.2;
 
-  const canvas = document.createElement('canvas');
+  // const canvas = document.createElement('canvas');
+  const canvas = new OffscreenCanvas(img.width, img.height);
   canvas.width = img.width;
   canvas.height = img.height; 
   const context = canvas.getContext('2d');

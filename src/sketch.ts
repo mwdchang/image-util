@@ -315,7 +315,8 @@ const directionalStrokes = (
   alpha: number
 ) => {
   const count = density * width * height / length / thickness / alpha;
-  const canvas = document.createElement('canvas');
+  // const canvas = document.createElement('canvas');
+  const canvas = new OffscreenCanvas(width, height);
   canvas.width = width;
   canvas.height = height;
 

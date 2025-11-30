@@ -81,30 +81,20 @@ a:active {
 <script type="module">
 import * as ImageUtil from "./dist/index.js";
 
+const workers = [
+  ImageUtil.newWorker('apple'),
+  ImageUtil.newWorker('orange'),
+  ImageUtil.newWorker('watermelon'),
+  ImageUtil.newWorker('nectarine')
+];
+const L = workers.length;
 const mainElem = document.body.querySelector('main');
-
-
 const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
-mainElem.append(ImageUtil.createCanvas(img));
 
+const promises = [];
+const next = () => { return promises.length % L };
 
-(async () => {
-  const worker = ImageUtil.newWorker();
-  const sepiaImage = await worker.sepiaFilter(img);
-  mainElem.append(ImageUtil.createCanvas(sepiaImage));
-})();
-
-// Dodge burn effect
-/*
-const burn = ImageUtil.dodgeFilter(
-  ImageUtil.invertFilter(ImageUtil.uniformBlur(ImageUtil.greyScaleFilter(img), 8)),
-  ImageUtil.greyScaleFilter(img)
-);
-const painterly = ImageUtil.painterlyFilter(img, 4, 10);
-const slic = ImageUtil.SLIC(img, 12, 18, 4, 80);
-const sepia = ImageUtil.sepiaFilter(img);
-
-const options = {
+promises.push(workers[promises.length % 2].sketchTransform(structuredClone(img), {
   levelSteps: 3,
   lineThickness: 1.5,
   lineLength: 40,
@@ -115,54 +105,66 @@ const options = {
   edgeAmount: 0.1,
   edgeBlurAmount: 3,
   greyScale: false
-};
-const sketch = ImageUtil.sketchTransform(structuredClone(img), options);
-
-const emboss = ImageUtil.embossFilter(img);
-
-let fishEye= ImageUtil.fishEyeFilter(img, 120, 80, 180, 0.0055);
-fishEye= ImageUtil.fishEyeFilter(fishEye, 220, 180, 140, 0.0055);
-
-const nightVision = ImageUtil.uniformBlur(
-  ImageUtil.glowFilter(
-    ImageUtil.nightVisionFilter(img)
-  ), 6
-);
-const polaroid = ImageUtil.polaroidFilter(img);
-const halftone = ImageUtil.halftoneFilter(img, {
+}));
+promises.push(workers[next()].sepiaFilter(img));
+promises.push(workers[next()].painterlyFilter(img, 4, 10));
+promises.push(workers[next()].SLIC(img, 12, 18, 4, 80));
+promises.push(workers[next()].swirlFilter(img, 150, 150, 200, 180 * Math.PI / 180.0));
+promises.push(workers[next()].kaleidoscopeFilter(img, 90, 150, 6));
+promises.push(workers[next()].sobelFilter(img));
+promises.push(workers[next()].polaroidFilter(img));
+promises.push(workers[next()].halftoneFilter(img, {
   kernel: 9,
   shiftXAmt: 0,
   shiftXStride: 0
-});
+}));
 
-const swirl = ImageUtil.swirlFilter(img, 150, 150, 200, 180 * Math.PI / 180.0);
-const kaleidoscope = ImageUtil.kaleidoscopeFilter(img, 90, 150, 6);
-const sobel = ImageUtil.sobelFilter(img);
 
-const filters = [
-  sobel,
-  burn,
-  painterly,
-  slic,
-  sepia,
-  sketch,
-  emboss,
-  fishEye,
-  nightVision,
-  polaroid,
-  halftone,
-  swirl,
-  kaleidoscope
-];
-*/
+promises.push(workers[next()].uniformBlur(
+  await workers[0].glowFilter(
+    await workers[1].nightVisionFilter(img)
+  ),
+  6
+));
 
-// for (const filter of _.shuffle(filters).slice(0, 7)) {
-//   mainElem.append(ImageUtil.createCanvas(filter));
-// }
+promises.push(workers[next()].dodgeFilter(
+  await workers[0].invertFilter(
+    await workers[1].uniformBlur(
+      await workers[0].greyScaleFilter(img), 8
+    )
+  ),
+  await workers[1].greyScaleFilter(img)
+));
 
-const blocker = document.querySelector('#load-blocker');
-if (blocker) {
-  blocker.remove();
-}
+promises.push(workers[next()].embossFilter(img));
+
+promises.push(workers[next()].fishEyeFilter(
+  await workers[1].fishEyeFilter(img, 120, 80, 180, 0.0055),
+  220, 180, 140, 0.0055
+));
+
+
+
+(async () => {
+  const filters = await Promise.all(promises);
+
+  const blocker = document.querySelector('#load-blocker');
+  if (blocker) {
+    blocker.remove();
+  }
+
+  // Original image goes first
+  mainElem.append(ImageUtil.createCanvas(img));
+
+  for (const filter of _.shuffle(filters).slice(0, 7)) {
+    mainElem.append(ImageUtil.createCanvas(filter));
+  }
+
+  // Clean up
+  for (const w of workers){
+    w.terminate();
+  }
+})();
+
 </script>
 </html>

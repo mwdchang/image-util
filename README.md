@@ -12,11 +12,21 @@ Quickstart
 <script type="module">
 import * as ImageUtil from "https://cdn.jsdelivr.net/gh/mwdchang/image-util@latest/dist/index.js"
 
+// Load image
 const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });
 document.body.append(ImageUtil.createCanvas(img));
 
+// Filter
 const painterly = ImageUtil.painterlyFilter(img, 4, 10);
 document.body.append(ImageUtil.createCanvas(painterly));
+
+// Using web-worker
+const worker = ImageUtil.newWorker();
+(async () => {
+  const sepiaImage = await worker.sepiaFilter(img);
+  document.body.append(ImageUtil.createCanvas(sepiaImage));
+})();
+
 
 </script>
 ```
