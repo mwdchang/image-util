@@ -21,6 +21,7 @@ import * as shear from './shear';
 import * as sketch from './sketch';
 import * as swirl from './swirl';
 import * as slic  from './slic';
+import * as polaroidCollage from './polaroid.ts';
 
 const filters: { [key: string]: Function } = {
   ...blur,
@@ -43,7 +44,8 @@ const filters: { [key: string]: Function } = {
   ...shear,
   ...sketch,
   ...swirl,
-  ...slic
+  ...slic,
+  ...polaroidCollage
 };
 
 let workerName = '';

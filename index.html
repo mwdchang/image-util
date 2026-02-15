@@ -144,6 +144,9 @@ promises.push(workers[next()].fishEyeFilter(
 ));
 
 
+promises.push(workers[next()].polaroidCollageFilter(img, 12));
+
+
 
 (async () => {
   const filters = await Promise.all(promises);

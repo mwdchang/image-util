@@ -10,6 +10,7 @@ import { hatchFilter } from '../../src';
 import { SLIC } from '../../src/slic';
 import { halftoneFilter } from '../../src/halftone';
 import { SketchOptions, sketchTransform } from '../../src/sketch';
+import { polaroidCollageFilter } from '../../src/polaroid';
 import { newWorker } from '../../src';
 
 const createCanvas = (img: ImageData) => {
@@ -57,6 +58,12 @@ const runExample = async () => {
     const hatch = await worker2.hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
     addExample(hatch);
   })();
+
+  (async () => {
+    const p = await worker1.polaroidCollageFilter(rose, 12);
+    addExample(p);
+  })();
+
 
 
   // const dodge = dodgeFilter(

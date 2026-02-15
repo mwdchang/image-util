@@ -1,5 +1,5 @@
 # image-util
-A collection of Javscript image manipulation utilties and effects filters.
+A collection of composable Javscript image manipulation utilties and effects filters.
 
 
 ![preview](preview.png)
