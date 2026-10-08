@@ -136,13 +136,14 @@ promises.push(workers[next()].uniformBlur(
   await workers[0].glowFilter(
     await workers[1].nightVisionFilter(img)
   ),
-  6
+  { value: 6 }
 ));
 
 promises.push(workers[next()].dodgeFilter(
   await workers[0].invertFilter(
     await workers[1].uniformBlur(
-      await workers[0].greyScaleFilter(img), 8
+      await workers[0].greyScaleFilter(img),
+      { value: 8 }
     )
   ),
   await workers[1].greyScaleFilter(img)
@@ -151,12 +152,12 @@ promises.push(workers[next()].dodgeFilter(
 promises.push(workers[next()].embossFilter(img));
 
 promises.push(workers[next()].fishEyeFilter(
-  await workers[1].fishEyeFilter(img, 120, 80, 180, 0.0055),
-  220, 180, 140, 0.0055
+  await workers[1].fishEyeFilter(img, { cx: 120, cy: 80, radius: 180, strength: 0.0055 }),
+  { cx: 220, cy: 180, radius: 140, strength: 0.0055 }
 ));
 
 
-promises.push(workers[next()].polaroidCollageFilter(img, 12));
+promises.push(workers[next()].polaroidCollageFilter(img, { num: 12 }));
 
 
 
