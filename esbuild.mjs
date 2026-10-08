@@ -149,17 +149,16 @@ function getDistBuild() {
                 target: 'es2020'
               });
 
-              let workerCode = workerBundle.outputFiles[0].text;
-              workerCode = escapeWorker(workerCode);
+              const workerCode = workerBundle.outputFiles[0].text;
 
               const replacement = `
 new Worker(
-  URL.createObjectURL(new Blob([\`${workerCode}\`], { type: 'text/javascript' })),
+  URL.createObjectURL(new Blob([${JSON.stringify(workerCode)}], { type: 'text/javascript' })),
   { type: 'module' }
 )
 `;
 
-              code = code.replace(workerRegex, replacement);
+              code = code.replace(workerRegex, () => replacement);
             } else {
             }
 

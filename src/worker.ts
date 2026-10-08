@@ -1,52 +1,29 @@
 /// <reference lib="webworker" />
 
-import * as blur from './blur';
-import * as colourSplash from './colour-splash';
-import * as colours from './colours';
-import * as dodge from './dodge';
-import * as edges from './edges';
-import * as fisheye from './fisheye';
-import * as gaussianBlur from './gaussian-blur';
-import * as glow from './glow';
-import * as greyscale from './greyscale';
-import * as grid from './grid';
-import * as halftone from './halftone';
-import * as hatch from './hatch';
-import * as invert from './invert';
-import * as kaleidoscope from './kaleidoscope';
-import * as motionBlur from './motion-blur';
-import * as painterly from './painterly';
-import * as radialBlur from './radial-blur';
-import * as shear from './shear';
-import * as sketch from './sketch';
-import * as swirl from './swirl';
-import * as slic  from './slic';
-import * as polaroidCollage from './polaroid.ts';
+import * as allthings from './index';
 
-const filters: { [key: string]: Function } = {
-  ...blur,
-  ...colourSplash,
-  ...colours,
-  ...dodge,
-  ...edges,
-  ...fisheye,
-  ...gaussianBlur,
-  ...glow,
-  ...greyscale,
-  ...grid,
-  ...halftone,
-  ...hatch,
-  ...invert,
-  ...kaleidoscope,
-  ...motionBlur,
-  ...painterly,
-  ...radialBlur,
-  ...shear,
-  ...sketch,
-  ...swirl,
-  ...slic,
-  ...polaroidCollage
-};
+// List of things to exclude from webworker
+// not great, but things don't really change very much
+// so just hardwire here.
+const excluded = new Set([
+  'createCanvas',
+  'loadImage',
+  'sampleBilinear',
+  'rgbToHsv',
+  'rgbToLab',
+  'computePixel',
+  'findLocalMinimum'
+]);
+
+const filters: { [key: string]: Function } = Object.fromEntries(
+  Object.entries(allthings)
+    .filter(([name, value]) =>
+      typeof value === 'function' && !excluded.has(name)
+    )
+    .map(([name, value]) => [name, value as Function])
+);
+console.log('Discovered filters:', filters);
+
 
 let workerName = '';
 
@@ -70,8 +47,8 @@ self.onmessage = (e: any) => {
     const result = filters[filter](imageData, ...params);
     console.log(`[worker: ${workerName}] finished with ${filter}`);
 
-    self.postMessage({ 
-      id, 
+    self.postMessage({
+      id,
       buffer: result.data.buffer,
       width: result.width,
       height: result.height,

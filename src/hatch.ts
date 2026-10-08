@@ -1,15 +1,22 @@
+import { z } from "zod";
+
 const luminosity = (r: number, g: number, b: number): number => {
-  return (r * 0.299 + g * 0.587 +  b * 0.114) / 255.0;
+  return (r * 0.299 + g * 0.587 + b * 0.114) / 255.0;
 };
+
+
+export const HatchOptionsSchema = z.object({
+  t1: z.number(),
+  t2: z.number(),
+  t3: z.number(),
+  t4: z.number(),
+});
 
 // http://www.geeks3d.com/20110219/shader-library-crosshatching-glsl-filter/
 // https://www.npmjs.com/package/glsl-crosshatch-filter
 export const hatchFilter = (
   img: ImageData,
-  t1: number,
-  t2: number,
-  t3: number,
-  t4: number
+  options: z.input<typeof HatchOptionsSchema>
 ): ImageData => {
   const w = img.width;
   const h = img.height;
@@ -19,8 +26,9 @@ export const hatchFilter = (
 
   const hatchColour = 10;
 
-  for(let y = 0; y < h; y++) {
-    for(let x = 0; x < w; x++) {
+  const { t1, t2, t3, t4 } = options;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
       const index = channels * (y * w + x);
       const r = img.data[index + 0];
       const g = img.data[index + 1];

@@ -1,3 +1,18 @@
+// {
+//   "compilerOptions": {
+//     "experimentalDecorators": true,
+//     "sourceMap": true,
+//     "moduleResolution": "node",
+//     "declaration": false,
+//     "declarationMap": false,
+//     "module": "es6",
+//     "target": "es6"
+//   },
+//   "include": [
+//     "src/**/*",
+//     "examples/**/*"
+//   ]
+// }
 {
   "compilerOptions": {
     "experimentalDecorators": true,
@@ -5,8 +20,8 @@
     "moduleResolution": "node",
     "declaration": false,
     "declarationMap": false,
-    "module": "es6",
-    "target": "es6"
+    "module": "es2020",
+    "target": "es2020"
   },
   "include": [
     "src/**/*",

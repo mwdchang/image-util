@@ -14,7 +14,7 @@ export const numChannels = (img: ImageData): number => {
   return img.data.length / img.width / img.height;
 };
 
-export const loadImage = async (url: string, options: LoadOptions): Promise<ImageData> =>  {
+export const loadImage = async (url: string, options: LoadOptions): Promise<ImageData> => {
   const img = new Image();
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -43,7 +43,7 @@ export const loadImage = async (url: string, options: LoadOptions): Promise<Imag
 export const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
-  canvas.height = img.height; 
+  canvas.height = img.height;
   const context = canvas.getContext('2d');
   context.putImageData(img, 0, 0);
   return canvas;
@@ -95,12 +95,12 @@ interface TransFormParam extends ColourData {
 /**
  * Transform a single image at pixel level
 **/
-type TransformFN = (d: TransFormParam)  => ColourData;
-export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => {
+type TransformFN = (d: TransFormParam) => ColourData;
+export const transformFilter = (img: ImageData, fn: TransformFN): ImageData => {
   const len = img.data.length;
   const result = new Uint8ClampedArray(len);
 
-  for (let i = 0; i < len; i+=4) {
+  for (let i = 0; i < len; i += 4) {
     const index = i / 4;
     const transformed = fn({
       r: img.data[i + 0],
@@ -110,10 +110,10 @@ export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => 
       x: index % img.width,
       y: Math.floor(index / img.height)
     });
-    result[i+0] = transformed.r;
-    result[i+1] = transformed.g;
-    result[i+2] = transformed.b;
-    result[i+3] = transformed.a;
+    result[i + 0] = transformed.r;
+    result[i + 1] = transformed.g;
+    result[i + 2] = transformed.b;
+    result[i + 3] = transformed.a;
   }
 
   return new ImageData(
@@ -126,14 +126,14 @@ export const transformFilter = (img: ImageData, fn: TransformFN) : ImageData => 
 /**
  * Combined transform of two images at pixel level
 **/
-type Transform2FN = (a: ColourData, b: ColourData)  => ColourData;
-export const transform2Filter = (img1: ImageData, img2: ImageData, fn: Transform2FN) : ImageData => {
+type Transform2FN = (a: ColourData, b: ColourData) => ColourData;
+export const transform2Filter = (img1: ImageData, img2: ImageData, fn: Transform2FN): ImageData => {
   if (img1.data.length !== img2.data.length) throw new Error('images need to be same length');
 
   const len = img1.data.length;
   const result = new Uint8ClampedArray(len);
 
-  for (let i = 0; i < len; i+=4) {
+  for (let i = 0; i < len; i += 4) {
     const transformed = fn(
       {
         r: img1.data[i + 0],
@@ -148,10 +148,10 @@ export const transform2Filter = (img1: ImageData, img2: ImageData, fn: Transform
         a: img2.data[i + 3]
       }
     );
-    result[i+0] = transformed.r;
-    result[i+1] = transformed.g;
-    result[i+2] = transformed.b;
-    result[i+3] = transformed.a;
+    result[i + 0] = transformed.r;
+    result[i + 1] = transformed.g;
+    result[i + 2] = transformed.b;
+    result[i + 3] = transformed.a;
   }
 
   return new ImageData(
@@ -231,7 +231,7 @@ export const convolve2 = (
     }
   }
   return result;
-}; 
+};
 
 /**
  * Applies a color matrix transformation to an image.
@@ -317,7 +317,7 @@ export const sampleBilinear = (img: ImageData, xpoint: number, ypoint: number) =
   function sample(px: number, py: number) {
     const i = (py * width + px) * 4;
     return [
-        data[i], data[i + 1], data[i + 2], data[i + 3]
+      data[i], data[i + 1], data[i + 2], data[i + 3]
     ];
   }
 
@@ -330,4 +330,3 @@ export const sampleBilinear = (img: ImageData, xpoint: number, ypoint: number) =
   const c1 = c01.map((v, i) => v * (1 - dx) + c11[i] * dx);
   return c0.map((v, i) => v * (1 - dy) + c1[i] * dy);
 }
-

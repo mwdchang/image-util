@@ -1,16 +1,19 @@
+import { z } from "zod";
+
+
 // https://github.com/geraintluff/canvas-sketch/blob/master/sketch.js
-export interface SketchOptions {
-  levelSteps: number;
-  lineThickness: number;
-  lineLength: number;
-  lineAlpha: number;
-  lineDensity: number;
-  darkeningFactor: number;
-  lightness: number;
-  edgeAmount: number;
-  edgeBlurAmount: number;
-  greyScale: boolean;
-}
+export const SketchOptionsSchema = z.object({
+  levelSteps: z.number(),
+  lineThickness: z.number(),
+  lineLength: z.number(),
+  lineAlpha: z.number(),
+  lineDensity: z.number(),
+  darkeningFactor: z.number(),
+  lightness: z.number(),
+  edgeAmount: z.number(),
+  edgeBlurAmount: z.number(),
+  greyScale: z.boolean(),
+});
 
 /*
 var Sketcher = (function() {
@@ -35,7 +38,10 @@ var Sketcher = (function() {
 })();
 */
 
-export const sketchTransform = (img: ImageData, options: SketchOptions) => {
+export const sketchTransform = (
+  img: ImageData,
+  options: z.input<typeof SketchOptionsSchema>
+) => {
   const width = img.width;
   const height = img.height;
   const pixels = img.data;
@@ -96,7 +102,7 @@ export const sketchTransform = (img: ImageData, options: SketchOptions) => {
 const transformCanvasInner = (
   img: ImageData,
   imageDatas: any[],
-  options: SketchOptions
+  options: z.input<typeof SketchOptionsSchema>
 ) => {
   const width = img.width;
   const height = img.height;
@@ -147,7 +153,7 @@ const createTextures = (
   width: number,
   height: number,
   requiredColours: { [key: string]: boolean },
-  options: SketchOptions
+  options: z.input<typeof SketchOptionsSchema>
 ) => {
   let start = performance.now();
   const steps = options.levelSteps;

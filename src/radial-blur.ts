@@ -1,4 +1,13 @@
+import { z } from 'zod';
 import { sampleBilinear } from "./core";
+
+export const RadialSpinOptionsSchema = z.object({
+  cx: z.number(),
+  cy: z.number(),
+  angleRad: z.number().default(0.5),
+  samples: z.number().default(32)
+});
+
 
 /**
  * cx - center x
@@ -7,14 +16,12 @@ import { sampleBilinear } from "./core";
  * angleRad - angle of blur
 **/
 export const radialSpinBlur = (
-  src: ImageData, 
-  cx: number, 
-  cy: number, 
-  angleRad = 0.5, 
-  samples = 32
+  src: ImageData,
+  options: z.input<typeof RadialSpinOptionsSchema>
 ) => {
   const { width, height } = src;
   const out = new ImageData(width, height);
+  const { cx, cy, angleRad, samples } = options;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -43,7 +50,7 @@ export const radialSpinBlur = (
       }
 
       const id = (y * width + x) * 4;
-      out.data[id]     = r / samples;
+      out.data[id] = r / samples;
       out.data[id + 1] = g / samples;
       out.data[id + 2] = b / samples;
       out.data[id + 3] = a / samples;

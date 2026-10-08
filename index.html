@@ -107,12 +107,24 @@ promises.push(workers[promises.length % 2].sketchTransform(structuredClone(img),
   greyScale: false
 }));
 promises.push(workers[next()].sepiaFilter(img));
-promises.push(workers[next()].painterlyFilter(img, 4, 10));
-promises.push(workers[next()].SLIC(img, 12, 18, 4, 80));
-promises.push(workers[next()].swirlFilter(img, 150, 150, 200, 180 * Math.PI / 180.0));
-promises.push(workers[next()].kaleidoscopeFilter(img, 90, 150, 6));
+promises.push(workers[next()].painterlyFilter(img, { radius: 4, intensity: 10 }));
+promises.push(workers[next()].SLIC(img, {
+  step: 12, 
+  iters: 18, 
+  stride: 4, 
+  weight: 80
+}));
+promises.push(workers[next()].swirlFilter(img, {
+  cx: 150, 
+  cy: 150, 
+  radius: 200, 
+  angle: 180 * Math.PI / 180.0
+}));
+promises.push(workers[next()].kaleidoscopeFilter(img, { 
+  cx: 90, cy: 150, segments: 6 
+}));
 promises.push(workers[next()].sobelFilter(img));
-promises.push(workers[next()].polaroidFilter(img));
+promises.push(workers[next()].polaroidFilter(img, { num: 12 }));
 promises.push(workers[next()].halftoneFilter(img, {
   kernel: 9,
   shiftXAmt: 0,

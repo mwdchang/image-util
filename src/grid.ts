@@ -1,12 +1,23 @@
-export const gridFilter = (img:ImageData, space: number, size: number): ImageData => {
+import { z } from 'zod';
+
+export const GridFilterOptionsSchema = z.object({
+  space: z.number(),
+  size: z.number(),
+});
+
+
+export const gridFilter = (
+  img: ImageData,
+  options: z.input<typeof GridFilterOptionsSchema>
+): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
 
   const res: number[] = [];
-
-  for(let y = 0; y < h; y++) {
-    for(let x = 0; x < w; x++) {
+  const { space, size } = options;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
       const index = channels * (y * w + x);
       if (y % space < size || x % space < size) {
         res.push(255);

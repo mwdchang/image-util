@@ -1,4 +1,13 @@
-export const polaroidCollageFilter = (img: ImageData, num: number): ImageData => {
+import { z } from 'zod';
+
+export const PolaroidOptionsSchema = z.object({
+  num: z.number().default(15)
+})
+
+export const polaroidCollageFilter = (
+  img: ImageData,
+  options: z.input<typeof PolaroidOptionsSchema>
+): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
@@ -14,7 +23,7 @@ export const polaroidCollageFilter = (img: ImageData, num: number): ImageData =>
   const RAD = Math.PI / 180.0;
   const BORDER = 4;
 
-  for (let i = 0; i < num; i++) {
+  for (let i = 0; i < options.num; i++) {
     const sx = Math.floor(Math.random() * w);
     const sy = Math.floor(Math.random() * h);
     const size = 35 + Math.floor(Math.random() * 40);
@@ -27,7 +36,7 @@ export const polaroidCollageFilter = (img: ImageData, num: number): ImageData =>
         const xrot = xidx * Math.cos(angle * RAD) - yidx * Math.sin(angle * RAD);
         const yrot = xidx * Math.sin(angle * RAD) + yidx * Math.cos(angle * RAD);
 
-        const px = Math.round(sx + xrot + jitter); 
+        const px = Math.round(sx + xrot + jitter);
         const py = Math.round(sy + yrot + jitter);
 
         if (px < 0 || px >= w) continue;
@@ -45,9 +54,9 @@ export const polaroidCollageFilter = (img: ImageData, num: number): ImageData =>
           r[channels * (px * w + py) + 2] = 230;
           r[channels * (px * w + py) + 3] = 255;
         } else {
-          r[channels * (px * w + py) + 0] = img.data[channels * (px * w + py) + 0]; 
-          r[channels * (px * w + py) + 1] = img.data[channels * (px * w + py) + 1]; 
-          r[channels * (px * w + py) + 2] = img.data[channels * (px * w + py) + 2]; 
+          r[channels * (px * w + py) + 0] = img.data[channels * (px * w + py) + 0];
+          r[channels * (px * w + py) + 1] = img.data[channels * (px * w + py) + 1];
+          r[channels * (px * w + py) + 2] = img.data[channels * (px * w + py) + 2];
           r[channels * (px * w + py) + 3] = 255;
         }
       }

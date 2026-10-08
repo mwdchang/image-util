@@ -1,22 +1,10 @@
-import { loadImage, transformFilter } from '../../src/core';
-import { dodgeFilter } from '../../src';
-import { greyScaleFilter } from '../../src';
-import { invertFilter } from '../../src';
-import {  uniformBlur } from '../../src/blur';
-import { sobelFilter, embossFilter } from '../../src/edges';
-import { painterlyFilter } from '../../src';
-import { fishEyeFilter } from '../../src';
-import { hatchFilter } from '../../src';
-import { SLIC } from '../../src/slic';
-import { halftoneFilter } from '../../src/halftone';
-import { SketchOptions, sketchTransform } from '../../src/sketch';
-import { polaroidCollageFilter } from '../../src/polaroid';
+import { loadImage } from '../../src/core';
 import { newWorker } from '../../src';
 
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
-  canvas.height = img.height; 
+  canvas.height = img.height;
   const context = canvas.getContext('2d');
   context.putImageData(img, 0, 0);
   return canvas;
@@ -40,7 +28,7 @@ const runExample = async () => {
 
   // Loading asynchronously
   (async () => {
-    const painterly = await worker1.painterlyFilter(rose, 4, 10);
+    const painterly = await worker1.painterlyFilter(rose, { radius: 4, intensity: 10 });
     addExample(painterly);
   })();
 
@@ -55,35 +43,26 @@ const runExample = async () => {
   })();
 
   (async () => {
-    const hatch = await worker2.hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
+    const hatch = await worker2.hatchFilter(rose, {
+      t1: 1.0,
+      t2: 0.75,
+      t3: 0.5,
+      t4: 0.35
+    });
     addExample(hatch);
   })();
 
   (async () => {
-    const p = await worker1.polaroidCollageFilter(rose, 12);
+    const p = await worker1.polaroidCollageFilter(rose, { num: 10 });
     addExample(p);
   })();
 
-
-
-  // const dodge = dodgeFilter(
-  //   invertFilter(uniformBlur(greyScaleFilter(rose), 7)),
-  //   greyScaleFilter(rose)
-  // ); 
-  // addExample(dodge);
-
-
-
-  // Heavy synchronous code after
-  // const start = performance.now();
-  // while (performance.now() - start < 2000) {} // simulate blocking
-  // console.log('main thread done');
-
+  (async () => {
+    const p = await worker1.greyScaleFilter(rose);
+    addExample(p);
+  })();
 
   /*
-
-
-
   const hatch = hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
   addExample(hatch);
 
