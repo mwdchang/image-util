@@ -131,11 +131,23 @@ export const hshear = (
       counter = 0;
     }
   }
-
   return shifted;
 }
 
-export const shearFilter = (img: ImageData, hChunk: number, hSize: number, vChunk: number, vSize: number) => {
-  let res = hshear(img, hChunk, hSize);
-  return vshear(res, vChunk, vSize);
+
+export const ShearAllOptionsSchema = z.object({
+  hChunk: z.number(),
+  hSize: z.number(),
+  vChunk: z.number(),
+  vSize: z.number(),
+});
+
+
+export const shearFilter = (
+  img: ImageData,
+  options: z.input<typeof ShearAllOptionsSchema>
+) => {
+  const { hChunk, hSize, vChunk, vSize } = options;
+  let res = hshear(img, { chunk: hChunk, maxSize: hSize });
+  return vshear(res, { chunk: vChunk, maxSize: vSize });
 }

@@ -102,7 +102,7 @@ export const sketchTransform = (
 const transformCanvasInner = (
   img: ImageData,
   imageDatas: any[],
-  options: SketchOptions
+  options: z.input<typeof SketchOptionsSchema>
 ) => {
   const width = img.width;
   const height = img.height;
@@ -153,7 +153,7 @@ const createTextures = (
   width: number,
   height: number,
   requiredColours: { [key: string]: boolean },
-  options: SketchOptions
+  options: z.input<typeof SketchOptionsSchema>
 ) => {
   let start = performance.now();
   const steps = options.levelSteps;
