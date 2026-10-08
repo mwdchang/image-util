@@ -2,7 +2,7 @@ import { loadImage, transformFilter } from '../../src/core';
 import { dodgeFilter } from '../../src';
 import { greyScaleFilter } from '../../src';
 import { invertFilter } from '../../src';
-import {  uniformBlur } from '../../src/blur';
+import { uniformBlur } from '../../src/blur';
 import { sobelFilter, embossFilter } from '../../src/edges';
 import { painterlyFilter } from '../../src';
 import { fishEyeFilter } from '../../src';
@@ -16,7 +16,7 @@ import { newWorker } from '../../src';
 const createCanvas = (img: ImageData) => {
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
-  canvas.height = img.height; 
+  canvas.height = img.height;
   const context = canvas.getContext('2d');
   context.putImageData(img, 0, 0);
   return canvas;
@@ -55,12 +55,22 @@ const runExample = async () => {
   })();
 
   (async () => {
-    const hatch = await worker2.hatchFilter(rose, 1.0, 0.75, 0.5, 0.35);
+    const hatch = await worker2.hatchFilter(rose, {
+      t1: 1.0,
+      t2: 0.75,
+      t3: 0.5,
+      t4: 0.35
+    });
     addExample(hatch);
   })();
 
   (async () => {
     const p = await worker1.polaroidCollageFilter(rose, 12);
+    addExample(p);
+  })();
+
+  (async () => {
+    const p = await worker1.greyScaleFilter(rose);
     addExample(p);
   })();
 

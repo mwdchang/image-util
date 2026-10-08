@@ -1,24 +1,31 @@
+import { z } from 'zod';
+
+export const FishEyeOptionSchema = z.object({
+  cx: z.number(),
+  cy: z.number(),
+  radius: z.number(),
+  strength: z.number(),
+});
+
+
 export const fishEyeFilter = (
-  img:ImageData,
-  cx: number,
-  cy: number,
-  radius: number,
-  strength: number
+  img: ImageData,
+  options: z.infer<typeof FishEyeOptionSchema>
 ): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
 
   const result: number[] = [];
-  for(let y = 0; y < h; y++) {
-    for(let x = 0; x < w; x++) {
-      const dx = x - cx;
-      const dy = y - cy;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const dx = x - options.cx;
+      const dy = y - options.cy;
       const r = Math.sqrt(dx * dx + dy * dy);
-      
-      if (r < radius) {
-        const u = Math.floor(cx + dx * strength * r);
-        const v = Math.floor(cy + dy * strength * r);
+
+      if (r < options.radius) {
+        const u = Math.floor(options.cx + dx * options.strength * r);
+        const v = Math.floor(options.cy + dy * options.strength * r);
         const index = channels * (v * w + u);
 
         result.push(img.data[index]);

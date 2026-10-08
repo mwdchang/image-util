@@ -17,7 +17,7 @@ export const glowFilter = (img: ImageData): ImageData => {
   }
   return new ImageData(
     new Uint8ClampedArray(r),
-    img.width, 
+    img.width,
     img.height
   );
 };

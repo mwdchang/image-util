@@ -1,20 +1,25 @@
+import { z } from 'zod';
 import { rgbToHsv, transformFilter } from "./core";
 
-export interface SplashOption {
-  bands: {
-    hueMin: number;
-    hueMax: number;
-    valueMax: number;
-  }[]
-}
+export const SplashOptionSchema = z.object({
+  bands: z.array(
+    z.object({
+      hueMin: z.number(),
+      hueMax: z.number(),
+      valueMax: z.number(),
+    })
+  ),
+});
 
-export const colourSplash = (image: ImageData, options: SplashOption): ImageData => {
-  let cnt = 0;
+export const colourSplash = (
+  image: ImageData,
+  options: z.infer<typeof SplashOptionSchema>
+): ImageData => {
   return transformFilter(image, (d) => {
     const r = d.r;
     const g = d.g;
     const b = d.b;
-    const { h, s, v }= rgbToHsv(r / 255, g / 255, b / 255);
+    const { h, s, v } = rgbToHsv(r / 255, g / 255, b / 255);
 
 
     let keepColour = false;

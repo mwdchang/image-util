@@ -5,16 +5,18 @@
 //     0.1 * b/255;
 // }
 
-interface HalftoneOptions {
-  kernel: number;
-  shiftXStride?: number;
-  shiftXAmt?: number;
-  shiftYStride?: number;
-  shiftYAmt?: number;
-  rWeight?: number;
-  gWeight?: number;
-  bWeight?: number;
-}
+import { z } from "zod";
+
+export const HalftoneOptionsSchema = z.object({
+  kernel: z.number(),
+  shiftXStride: z.number().optional(),
+  shiftXAmt: z.number().optional(),
+  shiftYStride: z.number().optional(),
+  shiftYAmt: z.number().optional(),
+  rWeight: z.number().optional(),
+  gWeight: z.number().optional(),
+  bWeight: z.number().optional(),
+});
 
 const rgb = (r: number, g: number, b: number) => `rgb(${r},${g},${b})`;
 
@@ -22,11 +24,11 @@ const sample = (
   imageData: ImageData,
   x: number,
   y: number,
-  options: HalftoneOptions
+  options: z.infer<typeof HalftoneOptionsSchema>
 ) => {
   const { width, data } = imageData;
   const kernel = options.kernel;
-  const size = kernel * kernel; 
+  const size = kernel * kernel;
 
   let r = 0;
   let g = 0;
@@ -34,7 +36,7 @@ const sample = (
 
   for (let i = y; i < y + kernel; i++) {
     for (let j = x; j < x + kernel; j++) {
-      const at = (i * width + j) * 4; 
+      const at = (i * width + j) * 4;
       r += data[at] || 0;
       g += data[at + 1] || 0;
       b += data[at + 2] || 0;
@@ -48,9 +50,9 @@ const sample = (
   return { v, avgR, avgG, avgB };
 }
 
-export const halftoneFilter= (
-  img: ImageData, 
-  options: HalftoneOptions
+export const halftoneFilter = (
+  img: ImageData,
+  options: z.infer<typeof HalftoneOptionsSchema>
 ) => {
   const kernel = options.kernel
   const w = img.width;
@@ -63,7 +65,7 @@ export const halftoneFilter= (
   // const canvas = document.createElement('canvas');
   const canvas = new OffscreenCanvas(img.width, img.height);
   canvas.width = img.width;
-  canvas.height = img.height; 
+  canvas.height = img.height;
   const context = canvas.getContext('2d');
 
   const halfKernel = (kernel - 1) * 0.5;
@@ -71,7 +73,7 @@ export const halftoneFilter= (
   for (let y = 0; y <= h - kernel; y += kernel) {
     for (let x = 0; x <= w - kernel; x += kernel) {
       const { v, avgR, avgG, avgB } = sample(img, x, y, options);
-      const r = (kernel/2) * (1 - v);
+      const r = (kernel / 2) * (1 - v);
 
       let shiftY = 0;
       if (options.shiftYAmt && options.shiftYStride) {
@@ -81,16 +83,16 @@ export const halftoneFilter= (
       if (options.shiftXAmt && options.shiftXStride) {
         shiftY = x % (options.shiftXStride * kernel) === 0 ? 0 : options.shiftXAmt;
       }
-      
+
       context.beginPath();
       context.fillStyle = rgb(avgR, avgG, avgB);
       context.ellipse(
-        shiftX +x + halfKernel, 
+        shiftX + x + halfKernel,
         shiftY + y + halfKernel,
         r, r,
         0, 0, 2 * Math.PI);
       context.fill();
-      context.closePath();  
+      context.closePath();
     }
   }
   return context.getImageData(0, 0, w, h);
