@@ -1,12 +1,24 @@
+import { z } from 'zod';
 import { sampleBilinear } from "./core";
+
+export const KaleidoscopeOptionsSchema = z.object({
+  cx: z.number().describe('center of symmetry'),
+  cy: z.number().describe('center of symmetry'),
+  segments: z.number().default(6).describe('number of mirrored slices')
+});
+
 
 /**
  * cx, cy - center of symmetry
  * segments - num mirrored slices
 **/
-export const kaleidoscopeFilter = (src: ImageData, cx: number, cy: number, segments = 6) => {
+export const kaleidoscopeFilter = (
+  src: ImageData,
+  options: z.input<typeof KaleidoscopeOptionsSchema>
+) => {
   const { width, height } = src;
   const out = new ImageData(width, height);
+  const { cx, cy, segments } = options;
 
   const angleStep = (2 * Math.PI) / segments;
 
@@ -15,18 +27,18 @@ export const kaleidoscopeFilter = (src: ImageData, cx: number, cy: number, segme
       let dx = x - cx;
       let dy = y - cy;
       let theta = Math.atan2(dy, dx);
-      let r = Math.sqrt(dx*dx + dy*dy);
+      let r = Math.sqrt(dx * dx + dy * dy);
 
       // Mirror the angle into one segment
       theta = theta % angleStep;              // angle within segment
-      theta = Math.abs(theta - angleStep/2);  // fold for symmetry
+      theta = Math.abs(theta - angleStep / 2);  // fold for symmetry
 
       const sx = cx + r * Math.cos(theta);
       const sy = cy + r * Math.sin(theta);
 
       const color = sampleBilinear(src, sx, sy);
       const id = (y * width + x) * 4;
-      out.data[id]     = color[0];
+      out.data[id] = color[0];
       out.data[id + 1] = color[1];
       out.data[id + 2] = color[2];
       out.data[id + 3] = color[3];

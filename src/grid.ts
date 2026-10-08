@@ -8,7 +8,7 @@ export const GridFilterOptionsSchema = z.object({
 
 export const gridFilter = (
   img: ImageData,
-  options: z.infer<typeof GridFilterOptionsSchema>
+  options: z.input<typeof GridFilterOptionsSchema>
 ): ImageData => {
   const w = img.width;
   const h = img.height;

@@ -24,7 +24,7 @@ const sample = (
   imageData: ImageData,
   x: number,
   y: number,
-  options: z.infer<typeof HalftoneOptionsSchema>
+  options: z.input<typeof HalftoneOptionsSchema>
 ) => {
   const { width, data } = imageData;
   const kernel = options.kernel;

@@ -13,7 +13,7 @@ export const SplashOptionSchema = z.object({
 
 export const colourSplash = (
   image: ImageData,
-  options: z.infer<typeof SplashOptionSchema>
+  options: z.input<typeof SplashOptionSchema>
 ): ImageData => {
   return transformFilter(image, (d) => {
     const r = d.r;

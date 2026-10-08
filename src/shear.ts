@@ -1,15 +1,26 @@
-export const vshear = (img: ImageData, chunk: number, maxSize: number) => {
+import { z } from 'zod';
+
+export const ShearOptionsSchema = z.object({
+  chunk: z.number(),
+  maxSize: z.number(),
+});
+
+export const vshear = (
+  img: ImageData,
+  options: z.input<typeof ShearOptionsSchema>
+) => {
   const width = img.width;
   const height = img.height;
 
-  const shifted = new ImageData( new Uint8ClampedArray(img.data), width, height);
+  const shifted = new ImageData(new Uint8ClampedArray(img.data), width, height);
+  const { chunk, maxSize } = options;
 
   let offset = Math.floor(Math.random() * maxSize);
-  
+
   let counter = 0;
   let flag = false;
   for (let i = 0; i < width; i++) {
-    counter ++;
+    counter++;
 
     if (flag) {
       for (let j = 0; j < height - offset; j++) {
@@ -58,18 +69,22 @@ export const vshear = (img: ImageData, chunk: number, maxSize: number) => {
 }
 
 
-export const hshear = (img: ImageData, chunk: number, maxSize: number) => {
+export const hshear = (
+  img: ImageData,
+  options: z.input<typeof ShearOptionsSchema>
+) => {
   const width = img.width;
   const height = img.height;
 
-  const shifted = new ImageData( new Uint8ClampedArray(img.data), width, height);
+  const shifted = new ImageData(new Uint8ClampedArray(img.data), width, height);
+  const { chunk, maxSize } = options;
 
   let offset = Math.floor(Math.random() * maxSize);
-  
+
   let counter = 0;
   let flag = false;
   for (let i = 0; i < height; i++) {
-    counter ++;
+    counter++;
 
     if (flag) {
       for (let j = 0; j < width - offset; j++) {
@@ -81,7 +96,7 @@ export const hshear = (img: ImageData, chunk: number, maxSize: number) => {
         shifted.data[idx + 2] = img.data[ridx + 2];
         shifted.data[idx + 3] = img.data[ridx + 3];
       }
-      
+
       for (let j = width - offset; j < width; j++) {
         const idx = 4 * (i * width + j);
         shifted.data[idx] = 255;

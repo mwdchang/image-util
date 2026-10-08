@@ -7,7 +7,7 @@ export const uniformBlurSchema = z.object({
 
 export const uniformBlur = (
   img: ImageData,
-  options: z.infer<typeof uniformBlurSchema>
+  options: z.input<typeof uniformBlurSchema>
 ): ImageData => {
   const v = options.value;
   const weights = [];

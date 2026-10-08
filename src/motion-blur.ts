@@ -1,7 +1,19 @@
+import { z } from 'zod';
 import { sampleBilinear } from "./core";
 
-export const motionBlur = (src: ImageData, angleRad: number, radius = 20, samples = 24) => {
+export const MotionBlurOptionsSchema = z.object({
+  angleRad: z.number(),
+  radius: z.number().default(24),
+  samples: z.number().default(24),
+});
+
+
+export const motionBlur = (
+  src: ImageData,
+  options: z.input<typeof MotionBlurOptionsSchema>
+) => {
   const { width, height } = src;
+  const { angleRad, radius, samples } = options;
 
   const out = new ImageData(width, height);
   const dx = Math.cos(angleRad);
@@ -24,7 +36,7 @@ export const motionBlur = (src: ImageData, angleRad: number, radius = 20, sample
       }
 
       const id = (y * width + x) * 4;
-      out.data[id]     = r / samples;
+      out.data[id] = r / samples;
       out.data[id + 1] = g / samples;
       out.data[id + 2] = b / samples;
       out.data[id + 3] = a / samples;

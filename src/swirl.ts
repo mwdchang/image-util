@@ -1,8 +1,20 @@
+import { z } from "zod";
 import { sampleBilinear } from "./core";
 
-export const swirlFilter = (src: ImageData, cx: number, cy: number, radius: number, angle: number) => {
+export const SwirlOptionsSchema = z.object({
+  cx: z.number(),
+  cy: z.number(),
+  radius: z.number(),
+  angle: z.number(),
+});
+
+export const swirlFilter = (
+  src: ImageData,
+  options: z.input<typeof SwirlOptionsSchema>
+) => {
   const { width, height } = src;
   const out = new ImageData(width, height);
+  const { cx, cy, radius, angle } = options;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -21,14 +33,14 @@ export const swirlFilter = (src: ImageData, cx: number, cy: number, radius: numb
 
         const color = sampleBilinear(src, sx, sy);
         const id = (y * width + x) * 4;
-        out.data[id]     = color[0];
+        out.data[id] = color[0];
         out.data[id + 1] = color[1];
         out.data[id + 2] = color[2];
         out.data[id + 3] = color[3];
       } else {
         const id = (y * width + x) * 4;
         const i = id;
-        out.data[id]     = src.data[i];
+        out.data[id] = src.data[i];
         out.data[id + 1] = src.data[i + 1];
         out.data[id + 2] = src.data[i + 2];
         out.data[id + 3] = src.data[i + 3];

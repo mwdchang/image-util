@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 // From https://github.com/xs7/Pixelate
 // From https://segmentfault.com/a/1190000040236028/en
 export const rgb2lab = (sR: number, sG: number, sB: number) => {
@@ -56,9 +58,9 @@ interface Center {
   b: number
 }
 
-export const findLocalMinimum = (img:ImageData, hpos: number, wpos: number) => {
+export const findLocalMinimum = (img: ImageData, hpos: number, wpos: number) => {
   let min_grad = Number.MAX_VALUE;
-  let loc_min: Center = { x: 0, y : 0, l: 0, a: 0, b: 0 };
+  let loc_min: Center = { x: 0, y: 0, l: 0, a: 0, b: 0 };
 
   const width = img.width;
   const height = img.height;
@@ -81,8 +83,8 @@ export const findLocalMinimum = (img:ImageData, hpos: number, wpos: number) => {
 const computeDist = (img: ImageData, center: Center, pixX: number, pixY: number, step: number, weight: number) => {
   const width = img.width;
   const dc = Math.sqrt(Math.pow(center.l - img.data[4 * (pixX * width + pixY)], 2)
-      + Math.pow(center.a - img.data[4 * (pixX * width + pixY) + 1], 2)
-      + Math.pow(center.b - img.data[4 * (pixX * width + pixY) + 2], 2));
+    + Math.pow(center.a - img.data[4 * (pixX * width + pixY) + 1], 2)
+    + Math.pow(center.b - img.data[4 * (pixX * width + pixY) + 2], 2));
   const ds = Math.sqrt(Math.pow(center.x - pixX, 2) + Math.pow(center.y - pixY, 2));
 
   return Math.pow(dc / weight, 2) + Math.pow(ds / step, 2)
@@ -100,7 +102,7 @@ export const computePixel = (img: ImageData, step: number, iters: number, weight
   ////////////////////////////////////////////
   // FIXME: change imageArray from RGB to LAB
   ////////////////////////////////////////////
-  
+
   for (let i = step; i < height; i += step) {
     for (let j = step; j < width; j += step) {
       let center = findLocalMinimum(img, i, j);
@@ -228,8 +230,8 @@ const pickPixel = (img: ImageData, centers: any[], clusterID: any[], stride: num
 }
 
 const getContours = (clusterID: any[], width: number, height: number) => {
-  const dx8 = [-1, -1,  0,  1, 1, 1, 0, -1];
-  const dy8 = [ 0, -1, -1, -1, 0, 1, 1,  1];
+  const dx8 = [-1, -1, 0, 1, 1, 1, 0, -1];
+  const dy8 = [0, -1, -1, -1, 0, 1, 1, 1];
   let contours = []
   let istaken = Array.from({ length: height }).map(linearray =>
     linearray = Array.from({ length: width }).map(item => item = false))
@@ -244,7 +246,7 @@ const getContours = (clusterID: any[], width: number, height: number) => {
 
         if (x >= 0 && x < height && y >= 0 && y < width) {
           if (istaken[x][y] == false && clusterID[i * width + j] != clusterID[x * width + y]) {
-              nr_p += 1
+            nr_p += 1
           }
         }
       }
@@ -260,9 +262,21 @@ const getContours = (clusterID: any[], width: number, height: number) => {
 }
 
 
-export const SLIC = (img: ImageData, step: number, iters: number, stride: number, weight: number) => {
+export const SLICOptionsSchema = z.object({
+  step: z.number(),
+  iters: z.number(),
+  stride: z.number(),
+  weight: z.number(),
+});
+
+
+export const SLIC = (
+  img: ImageData,
+  options: z.input<typeof SLICOptionsSchema>
+) => {
   const width = img.width;
   const height = img.height;
+  const { step, iters, stride, weight } = options;
 
   const imgCopyLAB = new ImageData(
     new Uint8ClampedArray(img.data),
@@ -272,14 +286,14 @@ export const SLIC = (img: ImageData, step: number, iters: number, stride: number
 
   // tranlate rgb to lab
   for (let i = 0; i < width * height; i += 4) {
-      let labColor = rgb2lab(
-        img.data[i], 
-        img.data[i + 1], 
-        img.data[i + 2]
-      );
-      imgCopyLAB.data[i] = labColor.l;
-      imgCopyLAB.data[i + 2] = labColor.a;
-      imgCopyLAB.data[i + 3] = labColor.b;
+    let labColor = rgb2lab(
+      img.data[i],
+      img.data[i + 1],
+      img.data[i + 2]
+    );
+    imgCopyLAB.data[i] = labColor.l;
+    imgCopyLAB.data[i + 2] = labColor.a;
+    imgCopyLAB.data[i + 3] = labColor.b;
   }
   const { clusterID, centers } = computePixel(imgCopyLAB, step, iters, weight);
   const result = pickPixel(img, centers, clusterID, stride);
@@ -287,12 +301,12 @@ export const SLIC = (img: ImageData, step: number, iters: number, stride: number
   const contours = getContours(clusterID, width, height);
 
   for (let i = 0; i < contours.length; i++) {
-      const idx = 4 * (contours[i].x * width + contours[i].y);
+    const idx = 4 * (contours[i].x * width + contours[i].y);
 
-      result[idx] = 255;
-      result[idx + 1] = 255;
-      result[idx + 2] = 255;
-      result[idx + 3] = 255;
+    result[idx] = 255;
+    result[idx + 1] = 255;
+    result[idx + 2] = 255;
+    result[idx + 3] = 255;
   }
 
   // return result

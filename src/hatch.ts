@@ -16,7 +16,7 @@ export const HatchOptionsSchema = z.object({
 // https://www.npmjs.com/package/glsl-crosshatch-filter
 export const hatchFilter = (
   img: ImageData,
-  options: z.infer<typeof HatchOptionsSchema>
+  options: z.input<typeof HatchOptionsSchema>
 ): ImageData => {
   const w = img.width;
   const h = img.height;

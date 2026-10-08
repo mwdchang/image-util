@@ -10,7 +10,7 @@ export const FishEyeOptionSchema = z.object({
 
 export const fishEyeFilter = (
   img: ImageData,
-  options: z.infer<typeof FishEyeOptionSchema>
+  options: z.input<typeof FishEyeOptionSchema>
 ): ImageData => {
   const w = img.width;
   const h = img.height;

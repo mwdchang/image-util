@@ -1,13 +1,26 @@
+import { z } from 'zod';
+
+
+export const PainterlyOptionsSchema = z.object({
+  radius: z.number(),
+  intensity: z.number()
+});
+
+
 // Derivied from https://www.codeproject.com/Articles/471994/OilPaintEffect
-export const painterlyFilter = (img: ImageData, radius: number, intensity: number): ImageData => {
+export const painterlyFilter = (
+  img: ImageData,
+  options: z.input<typeof PainterlyOptionsSchema>
+): ImageData => {
   const w = img.width;
   const h = img.height;
   const channels = 4;
 
   const dataOut = new Uint8ClampedArray(img.data);
+  const { radius, intensity } = options;
 
-  for(let y = radius; y < h - radius; y++) {
-    for(let x = radius; x < w - radius; x++) {
+  for (let y = radius; y < h - radius; y++) {
+    for (let x = radius; x < w - radius; x++) {
 
       const counter = [];
       const sumR = [];
@@ -28,8 +41,8 @@ export const painterlyFilter = (img: ImageData, radius: number, intensity: numbe
           const g = img.data[index + 1];
           const b = img.data[index + 2];
 
-          const currentIntensity = Math.floor((( r + g + b) / 3.0) * intensity / 255);
-          counter[currentIntensity] ++;
+          const currentIntensity = Math.floor(((r + g + b) / 3.0) * intensity / 255);
+          counter[currentIntensity]++;
           sumR[currentIntensity] += r;
           sumG[currentIntensity] += g;
           sumB[currentIntensity] += b;
@@ -50,7 +63,7 @@ export const painterlyFilter = (img: ImageData, radius: number, intensity: numbe
       dataOut[index + 1] = sumG[maxIndex] / tmp;
       dataOut[index + 2] = sumB[maxIndex] / tmp;
     }
-  } 
+  }
 
   return new ImageData(dataOut, w, h);
 };
