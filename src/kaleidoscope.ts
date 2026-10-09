@@ -24,10 +24,10 @@ export const kaleidoscopeFilter = (
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      let dx = x - cx;
-      let dy = y - cy;
+      const dx = x - cx;
+      const dy = y - cy;
       let theta = Math.atan2(dy, dx);
-      let r = Math.sqrt(dx * dx + dy * dy);
+      const r = Math.sqrt(dx * dx + dy * dy);
 
       // Mirror the angle into one segment
       theta = theta % angleStep;              // angle within segment
@@ -45,5 +45,5 @@ export const kaleidoscopeFilter = (
     }
   }
   return out;
-}
+};
 

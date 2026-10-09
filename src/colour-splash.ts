@@ -39,9 +39,9 @@ export const colourSplash = (
         g: Y,
         b: Y,
         a: d.a
-      }
+      };
     } else {
       return d;
     }
   });
-}
+};

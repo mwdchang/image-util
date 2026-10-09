@@ -44,5 +44,5 @@ export const motionBlur = (
   }
 
   return out;
-}
+};
 

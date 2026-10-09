@@ -43,18 +43,18 @@ const sample = (
     }
   }
 
-  let v = (options.rWeight * r + options.gWeight * g + options.bWeight * b) / (255 * size);
-  let avgR = r / (size);
-  let avgG = g / (size);
-  let avgB = b / (size);
+  const v = (options.rWeight * r + options.gWeight * g + options.bWeight * b) / (255 * size);
+  const avgR = r / (size);
+  const avgG = g / (size);
+  const avgB = b / (size);
   return { v, avgR, avgG, avgB };
-}
+};
 
 export const halftoneFilter = (
   img: ImageData,
   options: z.infer<typeof HalftoneOptionsSchema>
 ) => {
-  const kernel = options.kernel
+  const kernel = options.kernel;
   const w = img.width;
   const h = img.height;
 
@@ -79,7 +79,7 @@ export const halftoneFilter = (
       if (options.shiftYAmt && options.shiftYStride) {
         shiftY = x % (options.shiftYStride * kernel) === 0 ? 0 : options.shiftYAmt;
       }
-      let shiftX = 0;
+      const shiftX = 0;
       if (options.shiftXAmt && options.shiftXStride) {
         shiftY = x % (options.shiftXStride * kernel) === 0 ? 0 : options.shiftXAmt;
       }
@@ -96,4 +96,4 @@ export const halftoneFilter = (
     }
   }
   return context.getImageData(0, 0, w, h);
-}
+};

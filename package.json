@@ -19,26 +19,19 @@
     "build:examples": "node esbuild.mjs --examples",
     "build:lib": "node esbuild.mjs --lib",
     "build:types": "tsc --declaration --emitDeclarationOnly --skipLibCheck --project ./tsconfig.d.json --outDir ./build/types",
-    "clean": "run-p clean:**",
-    "clean:build": "rimraf build",
-    "clean:cache": "rimraf .rts2_cache",
+    "clean": "rimraf build",
     "watch": "run-p watch:*",
-    "watch:scripts": "yarn build:all --watch",
-    "watch:types": "yarn build:types --watch",
-    "develop": "yarn build:examples --watch --dev-server",
-    "esbuild": "node esbuild.mjs",
-    "examples": "run-s build:examples",
-    "lint": "eslint --fix --config ./.eslintrc.cjs \"./{src,tests,examples}/**/*.{js,ts}\""
+    "watch:scripts": "node esbuild.mjs --all --watch",
+    "watch:types": "npm run build:types -- --watch",
+    "develop": "node esbuild.mjs --examples --watch --dev-server",
+    "lint": "eslint --fix --config ./.eslintrc.cjs \"./{src,examples}/**/*.{js,ts}\""
   },
   "dependencies": {
-    "lodash": "^4.18.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@types/d3": "^7.1.0",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
-    "copy": "^0.0.1",
     "esbuild": "^0.28.1",
     "eslint": "^7.27.0",
     "eslint-config-esnext": "^4.1.0",
@@ -47,7 +40,6 @@
     "live-server": "^1.2.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "run-p": "^0.0.0",
     "typescript": "^5.9.3",
     "yargs": "^16.2.0"
   }

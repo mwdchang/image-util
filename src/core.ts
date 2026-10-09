@@ -121,7 +121,7 @@ export const transformFilter = (img: ImageData, fn: TransformFN): ImageData => {
     img.width,
     img.height
   );
-}
+};
 
 /**
  * Combined transform of two images at pixel level
@@ -159,7 +159,7 @@ export const transform2Filter = (img1: ImageData, img2: ImageData, fn: Transform
     img1.width,
     img1.height
   );
-}
+};
 
 /**
  * Adapted from https://www.html5rocks.com/en/tutorials/canvas/imagefilters/
@@ -273,9 +273,9 @@ export const mult = (img: ImageData, matrix: number[]): ImageData => {
 
 // RGB → HSV (normalized 0–1 range)
 export const rgbToHsv = (r: number, g: number, b: number) => {
-  let max = Math.max(r, g, b);
-  let min = Math.min(r, g, b);
-  let d = max - min;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const d = max - min;
 
   let h = 0;
   if (d !== 0) {
@@ -288,8 +288,8 @@ export const rgbToHsv = (r: number, g: number, b: number) => {
     }
   }
 
-  let s = max === 0 ? 0 : d / max;
-  let v = max;
+  const s = max === 0 ? 0 : d / max;
+  const v = max;
   return { h, s, v };
 };
 
@@ -303,8 +303,8 @@ export const sampleBilinear = (img: ImageData, xpoint: number, ypoint: number) =
   }
 
   // Clamp to edges
-  let x = Math.max(0, Math.min(width - 1, xpoint));
-  let y = Math.max(0, Math.min(height - 1, ypoint));
+  const x = Math.max(0, Math.min(width - 1, xpoint));
+  const y = Math.max(0, Math.min(height - 1, ypoint));
 
   const x0 = Math.floor(x);
   const y0 = Math.floor(y);
@@ -329,4 +329,4 @@ export const sampleBilinear = (img: ImageData, xpoint: number, ypoint: number) =
   const c0 = c00.map((v, i) => v * (1 - dx) + c10[i] * dx);
   const c1 = c01.map((v, i) => v * (1 - dx) + c11[i] * dx);
   return c0.map((v, i) => v * (1 - dy) + c1[i] * dy);
-}
+};

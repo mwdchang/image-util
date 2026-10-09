@@ -66,7 +66,7 @@ export const vshear = (
   }
 
   return shifted;
-}
+};
 
 
 export const hshear = (
@@ -132,7 +132,7 @@ export const hshear = (
     }
   }
   return shifted;
-}
+};
 
 
 export const ShearAllOptionsSchema = z.object({
@@ -148,6 +148,6 @@ export const shearFilter = (
   options: z.input<typeof ShearAllOptionsSchema>
 ) => {
   const { hChunk, hSize, vChunk, vSize } = options;
-  let res = hshear(img, { chunk: hChunk, maxSize: hSize });
+  const res = hshear(img, { chunk: hChunk, maxSize: hSize });
   return vshear(res, { chunk: vChunk, maxSize: vSize });
-}
+};

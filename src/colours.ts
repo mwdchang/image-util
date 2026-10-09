@@ -49,7 +49,7 @@ export const browniFilter = (img: ImageData): ImageData => {
     0.24113635128153335, -0.07441037908422492, 0.44972182064877153
   ];
   return mult(img, matrix);
-}
+};
 
 
 // vintage

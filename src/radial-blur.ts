@@ -58,5 +58,5 @@ export const radialSpinBlur = (
   }
 
   return out;
-}
+};
 

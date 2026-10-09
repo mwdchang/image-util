@@ -59,7 +59,7 @@ export const sketchTransform = (
         colourSet.add(pixelCode);
         pixelCodes.push(
           [pixels[index + 0], pixels[index + 1], pixels[index + 2]]
-        )
+        );
       }
     }
   }
@@ -96,7 +96,7 @@ export const sketchTransform = (
   }
   const { canvases, imageDatas } = createTextures(width, height, requiredColours, options);
   return transformCanvasInner(img, imageDatas, options);
-}
+};
 
 
 const transformCanvasInner = (
@@ -146,7 +146,7 @@ const transformCanvasInner = (
     }
   }
   return img;
-}
+};
 
 
 const createTextures = (
@@ -155,7 +155,7 @@ const createTextures = (
   requiredColours: { [key: string]: boolean },
   options: z.input<typeof SketchOptionsSchema>
 ) => {
-  let start = performance.now();
+  const start = performance.now();
   const steps = options.levelSteps;
   const canvases = [];
   const imageDatas = [];
@@ -176,7 +176,7 @@ const createTextures = (
     }
   }
 
-  for (let key in requiredColours) {
+  for (const key in requiredColours) {
     const parts = key.split(':');
     const ri = parseInt(parts[0]);
     const gi = parseInt(parts[1]);
@@ -209,7 +209,7 @@ const createTextures = (
     if (Math.abs(green - blue) > 0.1 || Math.abs(2 * red - green - blue) > 0.1) {
       hue = Math.atan2(Math.sqrt(3) * (green - blue), 2 * red - green - blue);
       const maxRgb = Math.max(255 - red, 255 - green, 255 - blue);
-      const minRgb = Math.min(255 - red, 255 - green, 255 - blue)
+      const minRgb = Math.min(255 - red, 255 - green, 255 - blue);
       saturation = (maxRgb - minRgb) / maxRgb;
       if (saturation == 0) {
         hue = Math.random() * Math.PI * 2;
@@ -235,13 +235,13 @@ const createTextures = (
     imageDatas[ri][gi][bi] = canvas.getContext('2d').getImageData(0, 0, width, height);
   }
 
-  let end = performance.now();
+  const end = performance.now();
   console.log('create textures....', (end - start));
 
   return {
     canvases, imageDatas
-  }
-}
+  };
+};
 
 
 const getPixel = (
@@ -288,7 +288,7 @@ const getPixel = (
         let blend = (0.75 - Math.abs(redIndex + ri - redBlend) / 2)
           * (0.75 - Math.abs(greenIndex + gi - greenBlend) / 2)
           * (0.75 - Math.abs(blueIndex + bi - blueBlend) / 2);
-        blend /= blendTotal
+        blend /= blendTotal;
 
         const imageData = imageDatas[redIndex + ri][greenIndex + gi][blueIndex + bi];
         if (imageData == undefined) {
@@ -306,7 +306,7 @@ const getPixel = (
     green: Math.min(255, Math.round(green * brighteningFactor)),
     blue: Math.min(255, Math.round(blue * brighteningFactor))
   };
-}
+};
 
 
 const directionalStrokes = (
@@ -349,7 +349,7 @@ const directionalStrokes = (
     context.stroke();
   }
   return canvas;
-}
+};
 
 
 interface SDOptions {
@@ -417,4 +417,4 @@ const calculateStandardDeviation = (inputRgb, options: SDOptions) => {
     }
   }
   return sd;
-}
+};

@@ -2,7 +2,6 @@ import esbuild from 'esbuild';
 import yargs from 'yargs';
 import globby from 'globby';
 import path from 'path';
-import copy from 'copy';
 import server from 'live-server';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -198,9 +197,7 @@ async function main(options) {
 
     // Copy static files for examples
     if (options.examples) {
-      copy('examples/static/**/*', 'build/examples/', (err) => {
-        if (err) console.error(err);
-      });
+      fs.cpSync('examples/static', 'build/examples', { recursive: true });
     }
 
     // Dev server

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const PolaroidOptionsSchema = z.object({
   num: z.number().default(15)
-})
+});
 
 export const polaroidCollageFilter = (
   img: ImageData,
@@ -69,4 +69,4 @@ export const polaroidCollageFilter = (
     w,
     h
   );
-}
+};
