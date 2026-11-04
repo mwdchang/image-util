@@ -27,7 +27,7 @@
     "lint": "eslint --fix --config ./.eslintrc.cjs \"./{src,examples}/**/*.{js,ts}\""
   },
   "dependencies": {
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.25.0",
