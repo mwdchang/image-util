@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const PolaroidOptionsSchema = z.object({
-  num: z.number().default(15)
+  num: z.number().int().min(1).max(50).default(15).describe('Number of photos')
 });
 
 export const polaroidCollageFilter = (

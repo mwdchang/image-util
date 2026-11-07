@@ -6,10 +6,10 @@ const luminosity = (r: number, g: number, b: number): number => {
 
 
 export const HatchOptionsSchema = z.object({
-  t1: z.number(),
-  t2: z.number(),
-  t3: z.number(),
-  t4: z.number(),
+  t1: z.number().min(0).max(1).multipleOf(0.01).default(1).describe('Threshold 1'),
+  t2: z.number().min(0).max(1).multipleOf(0.01).default(0.75).describe('Threshold 2'),
+  t3: z.number().min(0).max(1).multipleOf(0.01).default(0.5).describe('Threshold 3'),
+  t4: z.number().min(0).max(1).multipleOf(0.01).default(0.35).describe('Threshold 4'),
 });
 
 // http://www.geeks3d.com/20110219/shader-library-crosshatching-glsl-filter/

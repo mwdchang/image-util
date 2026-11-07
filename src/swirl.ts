@@ -2,10 +2,10 @@ import { z } from "zod";
 import { sampleBilinear } from "./core";
 
 export const SwirlOptionsSchema = z.object({
-  cx: z.number(),
-  cy: z.number(),
-  radius: z.number(),
-  angle: z.number(),
+  cx: z.number().min(0).max(1000).default(200).describe('Centre X'),
+  cy: z.number().min(0).max(1000).default(200).describe('Centre Y'),
+  radius: z.number().min(0).max(1000).default(200).describe('Radius'),
+  angle: z.number().min(0).max(Math.PI * 2).multipleOf(0.01).default(3.14).describe('Angle'),
 });
 
 export const swirlFilter = (

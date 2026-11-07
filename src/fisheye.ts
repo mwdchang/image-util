@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const FishEyeOptionSchema = z.object({
-  cx: z.number(),
-  cy: z.number(),
-  radius: z.number(),
-  strength: z.number(),
+  cx: z.number().min(0).max(1000).default(200).describe('Centre X'),
+  cy: z.number().min(0).max(1000).default(200).describe('Centre Y'),
+  radius: z.number().min(0).max(1000).default(200).describe('Radius'),
+  strength: z.number().min(0).max(0.05).multipleOf(0.0001).default(0.0055).describe('Strength'),
 });
 
 

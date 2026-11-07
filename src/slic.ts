@@ -263,10 +263,10 @@ const getContours = (clusterID: any[], width: number, height: number) => {
 
 
 export const SLICOptionsSchema = z.object({
-  step: z.number(),
-  iters: z.number(),
-  stride: z.number(),
-  weight: z.number(),
+  step: z.number().int().min(1).max(50).default(12).describe('Step'),
+  iters: z.number().int().min(1).max(40).default(18).describe('Iterations'),
+  stride: z.number().int().min(1).max(10).default(4).describe('Stride'),
+  weight: z.number().min(1).max(200).default(80).describe('Weight'),
 });
 
 

@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { sampleBilinear } from "./core";
 
 export const MotionBlurOptionsSchema = z.object({
-  angleRad: z.number(),
-  radius: z.number().default(24),
-  samples: z.number().default(24),
+  angleRad: z.number().min(0).max(Math.PI * 2).multipleOf(0.01).default(0.79).describe('Angle (radians)'),
+  radius: z.number().min(0).max(200).default(24).describe('Radius'),
+  samples: z.number().int().min(2).max(128).default(24).describe('Samples'),
 });
 
 

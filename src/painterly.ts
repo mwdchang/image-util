@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 
 export const PainterlyOptionsSchema = z.object({
-  radius: z.number(),
-  intensity: z.number()
+  radius: z.number().int().min(1).max(10).default(4).describe('Brush radius'),
+  intensity: z.number().int().min(1).max(30).default(10).describe('Intensity')
 });
 
 

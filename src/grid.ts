@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const GridFilterOptionsSchema = z.object({
-  space: z.number(),
-  size: z.number(),
+  space: z.number().int().min(1).max(100).default(20).describe('Grid spacing'),
+  size: z.number().int().min(0).max(50).default(5).describe('Line thickness'),
 });
 
 

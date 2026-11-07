@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const ShearOptionsSchema = z.object({
-  chunk: z.number(),
-  maxSize: z.number(),
+  chunk: z.number().int().min(1).max(100).default(12).describe('Chunk size'),
+  maxSize: z.number().int().min(0).max(100).default(20).describe('Max offset'),
 });
 
 export const vshear = (
@@ -136,10 +136,10 @@ export const hshear = (
 
 
 export const ShearAllOptionsSchema = z.object({
-  hChunk: z.number(),
-  hSize: z.number(),
-  vChunk: z.number(),
-  vSize: z.number(),
+  hChunk: z.number().int().min(1).max(100).default(12).describe('Horizontal chunk size'),
+  hSize: z.number().int().min(0).max(100).default(20).describe('Horizontal max offset'),
+  vChunk: z.number().int().min(1).max(100).default(12).describe('Vertical chunk size'),
+  vSize: z.number().int().min(0).max(100).default(20).describe('Vertical max offset'),
 });
 
 

@@ -8,14 +8,14 @@
 import { z } from "zod";
 
 export const HalftoneOptionsSchema = z.object({
-  kernel: z.number(),
-  shiftXStride: z.number().optional(),
-  shiftXAmt: z.number().optional(),
-  shiftYStride: z.number().optional(),
-  shiftYAmt: z.number().optional(),
-  rWeight: z.number().optional(),
-  gWeight: z.number().optional(),
-  bWeight: z.number().optional(),
+  kernel: z.number().int().min(1).max(32).default(9).describe('Kernel size'),
+  shiftXStride: z.number().int().min(0).max(50).default(0).describe('Shift X stride'),
+  shiftXAmt: z.number().int().min(0).max(100).default(0).describe('Shift X amount'),
+  shiftYStride: z.number().int().min(0).max(50).default(0).describe('Shift Y stride'),
+  shiftYAmt: z.number().int().min(0).max(100).default(0).describe('Shift Y amount'),
+  rWeight: z.number().min(0).max(1).multipleOf(0.01).default(0.2).describe('Red weight'),
+  gWeight: z.number().min(0).max(1).multipleOf(0.01).default(0.2).describe('Green weight'),
+  bWeight: z.number().min(0).max(1).multipleOf(0.01).default(0.2).describe('Blue weight'),
 });
 
 const rgb = (r: number, g: number, b: number) => `rgb(${r},${g},${b})`;

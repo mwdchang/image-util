@@ -4,11 +4,11 @@ import { rgbToHsv, transformFilter } from "./core";
 export const SplashOptionSchema = z.object({
   bands: z.array(
     z.object({
-      hueMin: z.number(),
-      hueMax: z.number(),
-      valueMax: z.number(),
+      hueMin: z.number().min(0).max(360).default(0).describe('Hue min'),
+      hueMax: z.number().min(0).max(360).default(60).describe('Hue max'),
+      valueMax: z.number().min(0).max(1).multipleOf(0.01).default(1).describe('Max value'),
     })
-  ),
+  ).default([{ hueMin: 0, hueMax: 60, valueMax: 1 }]).describe('Colour bands'),
 });
 
 export const colourSplash = (

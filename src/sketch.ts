@@ -3,16 +3,16 @@ import { z } from "zod";
 
 // https://github.com/geraintluff/canvas-sketch/blob/master/sketch.js
 export const SketchOptionsSchema = z.object({
-  levelSteps: z.number(),
-  lineThickness: z.number(),
-  lineLength: z.number(),
-  lineAlpha: z.number(),
-  lineDensity: z.number(),
-  darkeningFactor: z.number(),
-  lightness: z.number(),
-  edgeAmount: z.number(),
-  edgeBlurAmount: z.number(),
-  greyScale: z.boolean(),
+  levelSteps: z.number().int().min(2).max(6).default(3).describe('Level steps'),
+  lineThickness: z.number().min(0.5).max(5).multipleOf(0.1).default(1.5).describe('Line thickness'),
+  lineLength: z.number().min(5).max(200).default(40).describe('Line length'),
+  lineAlpha: z.number().min(0).max(1).multipleOf(0.01).default(0.3).describe('Line alpha'),
+  lineDensity: z.number().min(0).max(1).multipleOf(0.01).default(0.2).describe('Line density'),
+  darkeningFactor: z.number().min(0).max(1).multipleOf(0.01).default(0.1).describe('Darkening factor'),
+  lightness: z.number().min(1).max(10).default(4).describe('Lightness'),
+  edgeAmount: z.number().min(0).max(1).multipleOf(0.01).default(0.1).describe('Edge amount'),
+  edgeBlurAmount: z.number().min(0).max(10).multipleOf(0.1).default(3).describe('Edge blur amount'),
+  greyScale: z.boolean().default(false).describe('Grey scale'),
 });
 
 /*

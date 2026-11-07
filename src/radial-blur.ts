@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { sampleBilinear } from "./core";
 
 export const RadialSpinOptionsSchema = z.object({
-  cx: z.number(),
-  cy: z.number(),
-  angleRad: z.number().default(0.5),
-  samples: z.number().default(32)
+  cx: z.number().min(0).max(1000).default(200).describe('Centre X'),
+  cy: z.number().min(0).max(1000).default(200).describe('Centre Y'),
+  angleRad: z.number().min(0).max(Math.PI * 2).multipleOf(0.01).default(0.5).describe('Angle (radians)'),
+  samples: z.number().int().min(2).max(128).default(32).describe('Samples')
 });
 
 

@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { sampleBilinear } from "./core";
 
 export const KaleidoscopeOptionsSchema = z.object({
-  cx: z.number().describe('center of symmetry'),
-  cy: z.number().describe('center of symmetry'),
-  segments: z.number().default(6).describe('number of mirrored slices')
+  cx: z.number().min(0).max(1000).default(200).describe('Centre X'),
+  cy: z.number().min(0).max(1000).default(200).describe('Centre Y'),
+  segments: z.number().int().min(2).max(32).default(6).describe('Mirrored slices')
 });
 
 
