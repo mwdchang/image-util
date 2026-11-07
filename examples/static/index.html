@@ -307,14 +307,13 @@
                 baseURL = l.origin + '/';
             }
 
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = baseURL + 'style.css';
-            document.head.appendChild(link);
-
             var script = document.createElement('script');
             script.type = 'module';
-            script.src = baseURL + 'examples/index.js';
+            if (l.hostname.indexOf('github.io') !== -1) {
+                script.src = baseURL + 'index.js';
+            } else {
+                script.src = baseURL + 'examples/index.js';
+            }
             document.body.appendChild(script);
         });
     </script>
