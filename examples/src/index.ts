@@ -63,6 +63,7 @@ const controlsForm = document.createElement('div');
 const codeOutput = document.createElement('code');
 const imageSelect = document.createElement('select');
 const select = document.createElement('select');
+const demoBlurb = document.createElement('div');
 select.classList = 'select-wrapper';
 
 const worker: any = ImageUtil.newWorker('examples');
@@ -260,7 +261,7 @@ const selectExample = (example: Example): void => {
   void run();
 };
 
-const buildUi = (): void => {
+const buildUI = (): void => {
   const controlsHeader = document.createElement('div');
   controlsHeader.className = 'controls-header';
 
@@ -293,7 +294,18 @@ const buildUi = (): void => {
     selectExample(examples[Number(select.value)]);
   });
 
-  controlsHeader.append(imagePicker, picker, status);
+  controlsHeader.append(demoBlurb, imagePicker, picker, status);
+
+  const message = document.createTextNode("Click to see ");
+  const link = document.createElement("a");
+  link.href = "demo.html";
+  link.textContent = "showcase";
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  demoBlurb.className = 'demo-blurb';
+  demoBlurb.appendChild(message);
+  demoBlurb.appendChild(link);
+  demoBlurb.appendChild(document.createElement('br'));
 
   controlsPanel.className = 'controls-panel';
   controlsPanel.append(controlsHeader, controlsForm);
@@ -332,7 +344,7 @@ const start = async (): Promise<void> => {
   originalImage = await loadTestImage(testImages[0]);
   draw(originalCanvas, originalImage);
 
-  buildUi();
+  buildUI();
   select.value = '0';
   selectExample(current);
 };

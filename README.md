@@ -17,10 +17,13 @@ const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300,
 document.body.append(ImageUtil.createCanvas(img));
 
 // Filter
-const painterly = ImageUtil.painterlyFilter(img, 4, 10);
+const painterly = ImageUtil.painterlyFilter(img, {
+  radius: 4,
+  intensity: 10
+});
 document.body.append(ImageUtil.createCanvas(painterly));
 
-// Using web-worker
+// Using a web-worker
 const worker = ImageUtil.newWorker();
 (async () => {
   const sepiaImage = await worker.sepiaFilter(img);

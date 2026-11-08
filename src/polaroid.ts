@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const PolaroidOptionsSchema = z.object({
-  num: z.number().int().min(1).max(50).default(15).describe('Number of photos')
+  num: z.number().int().min(1).max(50).default(10).describe('Number of photos')
 });
 
 export const polaroidCollageFilter = (
@@ -11,7 +11,6 @@ export const polaroidCollageFilter = (
   const w = img.width;
   const h = img.height;
   const channels = 4;
-
 
   const r: number[] = [];
   for (let i = 0; i < img.data.length; i++) {
@@ -44,20 +43,20 @@ export const polaroidCollageFilter = (
 
         // Sampling logic
         if (xidx < -size + BORDER || xidx > size - BORDER) {
-          r[channels * (px * w + py) + 0] = 230;
-          r[channels * (px * w + py) + 1] = 230;
-          r[channels * (px * w + py) + 2] = 230;
-          r[channels * (px * w + py) + 3] = 255;
+          r[channels * (py * w + px) + 0] = 230;
+          r[channels * (py * w + px) + 1] = 230;
+          r[channels * (py * w + px) + 2] = 230;
+          r[channels * (py * w + px) + 3] = 255;
         } else if (yidx < -size + 2 * BORDER || yidx > size - BORDER) {
-          r[channels * (px * w + py) + 0] = 230;
-          r[channels * (px * w + py) + 1] = 230;
-          r[channels * (px * w + py) + 2] = 230;
-          r[channels * (px * w + py) + 3] = 255;
+          r[channels * (py * w + px) + 0] = 230;
+          r[channels * (py * w + px) + 1] = 230;
+          r[channels * (py * w + px) + 2] = 230;
+          r[channels * (py * w + px) + 3] = 255;
         } else {
-          r[channels * (px * w + py) + 0] = img.data[channels * (px * w + py) + 0];
-          r[channels * (px * w + py) + 1] = img.data[channels * (px * w + py) + 1];
-          r[channels * (px * w + py) + 2] = img.data[channels * (px * w + py) + 2];
-          r[channels * (px * w + py) + 3] = 255;
+          r[channels * (py * w + px) + 0] = img.data[channels * (py * w + px) + 0];
+          r[channels * (py * w + px) + 1] = img.data[channels * (py * w + px) + 1];
+          r[channels * (py * w + px) + 2] = img.data[channels * (py * w + px) + 2];
+          r[channels * (py * w + px) + 3] = 255;
         }
       }
     }
