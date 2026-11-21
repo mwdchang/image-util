@@ -22,3 +22,4 @@ export * from './swirl';
 export * from './kaleidoscope';
 export * from './controller';
 export * from './polaroid';
+export * from './film-damage';

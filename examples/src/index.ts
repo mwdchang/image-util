@@ -27,6 +27,7 @@ const examples: Example[] = [
   { name: 'Uniform blur', filter: 'uniformBlur', options: ImageUtil.uniformBlurSchema },
   { name: 'Polaroid collage', filter: 'polaroidCollageFilter', options: ImageUtil.PolaroidOptionsSchema },
   { name: 'Colour splash', filter: 'colourSplash', options: ImageUtil.SplashOptionSchema },
+  { name: 'Film damage', filter: 'filmDamageFilter', options: ImageUtil.FilmDamageOptionsSchema },
 
   // Filters without options
   { name: 'Greyscale', filter: 'greyScaleFilter' },
