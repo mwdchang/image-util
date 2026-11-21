@@ -197,10 +197,14 @@ const updateCode = (): void => {
     }
   }
 
+  const w = originalImage.width;
+  const h = originalImage.height;
+
   const lines = [
     'import * as ImageUtil from "https://cdn.jsdelivr.net/gh/mwdchang/image-util@latest/dist/index.js";',
     '',
-    "const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: 300, height: 300 });",
+    '// Example image',
+    `const img = await ImageUtil.loadImage('https://picsum.photos/300', { width: ${w}, height: ${h} });`,
   ];
 
   if (current.options) {
@@ -237,6 +241,7 @@ const selectImage = async (file: string): Promise<void> => {
     originalImage = image;
     draw(originalCanvas, image);
     void run();
+    updateCode();
   } catch (error) {
     console.error(error);
     if (request === imageRequest) setStatus(`Could not load ${file}`);
