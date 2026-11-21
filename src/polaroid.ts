@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const PolaroidOptionsSchema = z.object({
-  num: z.number().int().min(1).max(50).default(10).describe('Number of photos')
+  num: z.number().int().min(1).max(50).default(10).describe('Number of photos'),
+  offset: z.number().int().min(0).max(40).default(5).describe('Random offset')
 });
 
 export const polaroidCollageFilter = (
@@ -20,13 +21,20 @@ export const polaroidCollageFilter = (
   }
 
   const RAD = Math.PI / 180.0;
-  const BORDER = 4;
+  const BORDER = 3;
 
+  console.log('');
   for (let i = 0; i < options.num; i++) {
     const sx = Math.floor(Math.random() * w);
     const sy = Math.floor(Math.random() * h);
     const size = 35 + Math.floor(Math.random() * 40);
     const angle = Math.random() * 340;
+
+    let offset = 20 + Math.random() * options.offset;
+    if (Math.random() > 0.5) {
+      offset = -offset;
+    }
+    offset = Math.ceil(offset);
 
     for (let xidx = -size; xidx < size; xidx += 0.5) {
       for (let yidx = -size; yidx < size; yidx += 0.5) {
@@ -53,10 +61,25 @@ export const polaroidCollageFilter = (
           r[channels * (py * w + px) + 2] = 230;
           r[channels * (py * w + px) + 3] = 255;
         } else {
-          r[channels * (py * w + px) + 0] = img.data[channels * (py * w + px) + 0];
-          r[channels * (py * w + px) + 1] = img.data[channels * (py * w + px) + 1];
-          r[channels * (py * w + px) + 2] = img.data[channels * (py * w + px) + 2];
-          r[channels * (py * w + px) + 3] = 255;
+          const offsetidx = (py + offset) * w + (px + offset);
+          const pidx = (py * w + px);
+
+          if (offsetidx < 0 || offsetidx >= w * h) {
+            r[channels * pidx + 0] = 0;
+            r[channels * pidx + 1] = 0;
+            r[channels * pidx + 2] = 0;
+            r[channels * pidx + 3] = 255;
+          } else {
+            r[channels * pidx + 0] = img.data[channels * offsetidx + 0];
+            r[channels * pidx + 1] = img.data[channels * offsetidx + 1];
+            r[channels * pidx + 2] = img.data[channels * offsetidx + 2];
+            r[channels * pidx + 3] = 255;
+          }
+
+          // r[channels * (py * w + px) + 0] = img.data[channels * (py * w + px) + 0];
+          // r[channels * (py * w + px) + 1] = img.data[channels * (py * w + px) + 1];
+          // r[channels * (py * w + px) + 2] = img.data[channels * (py * w + px) + 2];
+          // r[channels * (py * w + px) + 3] = 255;
         }
       }
     }
